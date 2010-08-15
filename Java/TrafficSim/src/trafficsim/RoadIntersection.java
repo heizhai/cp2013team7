@@ -15,6 +15,12 @@ public class RoadIntersection {
     private short lightState;
     private int intersectionStopLine;
 
+    RoadIntersection(int stopLine, short noLanes, int roadLength) {
+        this.road = new Road(noLanes, roadLength);
+        this.intersectionStopLine = stopLine;
+        
+    }
+
     /**
      * Returns the road element which this section of the intersection belongs to
      *

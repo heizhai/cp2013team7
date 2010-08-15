@@ -8,9 +8,6 @@ import java.util.ArrayList;
  * @author Twistie
  */
 class Road {
-    static final Boolean TRAFFIC_EAST_SOUTH = true;
-    static final Boolean TRAFFIC_WEST_NORTH = false;
-
     private ArrayList<Lane> lanes = new ArrayList<Lane>();
     private Boolean trafficDirection;
     private int roadLength;
@@ -30,8 +27,8 @@ class Road {
 
     public ArrayList<Lane> getNeighbouringLanes(Lane lane) {
         ArrayList<Lane> neighbours = new ArrayList<Lane>();
-        neighbours.add(this.lanes.get(this.lanes.indexOf(lane)-1));
-        neighbours.add(this.lanes.get(this.lanes.indexOf(lane)+1));
+        neighbours.add(this.getLanes().get(this.getLanes().indexOf(lane)-1));
+        neighbours.add(this.getLanes().get(this.getLanes().indexOf(lane)+1));
         return neighbours;
     }
 
@@ -41,7 +38,7 @@ class Road {
      * @param lanes the lanes to set
      */
     public void addLane(Lane lane) {
-        lanes.add(lane);
+        getLanes().add(lane);
     }
 
     /**
@@ -50,7 +47,7 @@ class Road {
      * @param lanes the lanes to set
      */
     public void removeLane() {
-        lanes.remove((this.lanes.size()-1));
+        getLanes().remove((this.getLanes().size()-1));
     }
 
     /**
@@ -89,33 +86,17 @@ class Road {
         this.roadLength = roadLength;
     }
 
-     /**
-     * Set the length of this road.
-     *
-     * @param roadLength the roadLength to set
-     */
-    public void trafficDriveCycle(int trafficCycleDistance) {
-        for (Lane l: lanes) {
-            for (Car c: l.getCars()) {
-                //Move The Car Forward
-                c.setLanePosition(c.getLanePosition()+trafficCycleDistance);
-
-                if(c.intersects(l.getCarInfront(c))) {
-                    for(Lane nl: getNeighbouringLanes(l)) {
-                        if(nl.isLaneClear(c.getLanePosition())) {
-                            trafficChangeLane(l, c, nl);
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private void trafficChangeLane(Lane l, Car c, Lane nl) {
+    public void trafficChangeLane(Lane l, Car c, Lane nl) {
         Car tempCar = c;
         l.removeCar(c);
-        nl.addCar(c);
+        nl.addCar(tempCar);
+    }
+
+    /**
+     * @return the lanes
+     */
+    public ArrayList<Lane> getLanes() {
+        return lanes;
     }
 
 }

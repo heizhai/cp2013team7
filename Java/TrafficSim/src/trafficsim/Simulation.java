@@ -1,8 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package trafficsim;
 
 /**
@@ -11,80 +6,71 @@ package trafficsim;
  */
 public class Simulation {
 
-    private short hLanes;
-    private short vLanes;
-    private float hCarProbability;
-    private float vCarProbability;
-    private Intersection modelIntersection;
-
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // TODO code application logic here
+
+        Intersection modelIntersection = new Intersection();
+
+        mainWindow window = new mainWindow(modelIntersection);
+        window.setSize(700, 700);
+        window.setVisible(true);
+        
+    }
+
+    public void init() {
+
+    }
+
+
+    public void simCycle(Intersection modelIntersection) {
+        // Generate New Cars
+            //TODO: Add Probability
+
+
+
+        // Move all Cars
+
     }
 
     /**
      * @param runCycles
      */
-    public void run(int runCycles) {
+    public void lightCycle(int runCycles) {
 
     }
 
-    /**
-     * @return the hLanes
-     */
-    public short getHLanes() {
-        return hLanes;
-    }
+    public void carSimCycle(RoadIntersection roadIntersection) {
 
-    /**
-     * @param hLanes the hLanes to set
-     */
-    public void setHLanes(short hLanes) {
-        this.hLanes = hLanes;
-    }
+       int trafficCycleDistance = Settings.CAR_MOVE;
 
-    /**
-     * @return the vLanes
-     */
-    public short getvLanes() {
-        return vLanes;
-    }
+       for (Lane l: roadIntersection.getRoad().getLanes()) {
+            for (Car c: l.getCars()) {
+                //Move The Car Forward
+                if(c.getStopped() == false) {
+                    if(c.intersects(roadIntersection.getIntersectionStopLine()) && (roadIntersection.getLightState() != RoadIntersection.GREEN_LIGHT)) {
+                        c.setStopped(true);
+                        c.moveCar(-trafficCycleDistance);
+                    }
+                    c.moveCar(trafficCycleDistance);
+                }
 
-    /**
-     * @param vLanes the vLanes to set
-     */
-    public void setvLanes(short vLanes) {
-        this.vLanes = vLanes;
-    }
+                if(c.intersects(l.getCarInfront(c))) {
+                    for(Lane nl: roadIntersection.getRoad().getNeighbouringLanes(l)) {
+                        if(nl.isLaneClear(c.getLanePosition())) {
+                            roadIntersection.getRoad().trafficChangeLane(l, c, nl);
+                            break;
+                        } else {
+                            c.moveCar(-trafficCycleDistance);
+                            c.setStopped(true);
+                        }
+                    }
+                } else {
 
-    /**
-     * @return the hCarProbability
-     */
-    public float gethCarProbability() {
-        return hCarProbability;
-    }
-
-    /**
-     * @param hCarProbability the hCarProbability to set
-     */
-    public void sethCarProbability(float hCarProbability) {
-        this.hCarProbability = hCarProbability;
-    }
-
-    /**
-     * @return the vCarProbability
-     */
-    public float getvCarProbability() {
-        return vCarProbability;
-    }
-
-    /**
-     * @param vCarProbability the vCarProbability to set
-     */
-    public void setvCarProbability(float vCarProbability) {
-        this.vCarProbability = vCarProbability;
+                }
+            }
+       }
     }
 
 }
