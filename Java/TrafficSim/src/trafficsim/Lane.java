@@ -1,6 +1,6 @@
 package trafficsim;
 
-import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Class to simulate a lane in the Traffic Intersection Simulation
@@ -9,17 +9,46 @@ import java.util.ArrayList;
  */
 public class Lane {
 
-    private ArrayList<Car> cars = new ArrayList<Car>();
+    private CopyOnWriteArrayList<Car> cars = new CopyOnWriteArrayList<Car>();
 
     /**
      * @return an Individual car given the index.
      */
-    public ArrayList<Car> getCars() {
+    public CopyOnWriteArrayList<Car> getCars() {
         return this.cars;
     }
 
-    public Car getCarInfront(Car car) {
-        return this.cars.get(this.cars.indexOf(car));
+    public Car getCarInfront(Car car, Boolean trafficDirection) {
+        Car closestCar = null;
+        for(Car c: cars) {
+            if(trafficDirection == Settings.TRAFFIC_EAST_SOUTH) {
+                if(c.getLanePosition() > car.getLanePosition()) {
+                    if(closestCar == null) {
+                        closestCar = c;
+                    } else {
+                        if (c.getLanePosition() < closestCar.getLanePosition()) {
+                            closestCar = c;
+                        }
+                    }
+                }
+            } else {
+                if(c.getLanePosition() < car.getLanePosition()) {
+                    if(closestCar == null) {
+                        closestCar = c;
+                    } else {
+                        if (c.getLanePosition() > closestCar.getLanePosition()) {
+                            closestCar = c;
+                        }
+                    }
+                }
+            }
+        }
+        if(closestCar == null) {
+            //If there is not a car, set it to itself
+            return car;
+        } else {
+            return closestCar;
+        }
     }
 
     /**

@@ -1,9 +1,18 @@
 package trafficsim;
 
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JSeparator;
+import javax.swing.JButton;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+
 
 /**
  *
@@ -16,52 +25,146 @@ public class mainWindow extends javax.swing.JFrame {
     //Main Menu Bar
     private JMenuBar mainMenuBar;
     private JMenu fileMenu;
+    private JMenu settingsMenu;
     
     //File Menu
     private JMenuItem runMenuItem;
     private JMenuItem runMultiMenuItem;
+    private JCheckBoxMenuItem simRunMenuItem;
     private JMenuItem exitMenuItem;
+
+    //Settings Menu
+    private JMenuItem setHLanesMenuItem;
+    private JMenuItem setVLanesMenuItem;
+    private JMenuItem setHProbMenuItem;
+    private JMenuItem setVProbMenuItem;
 
     //Drawing Area
     private SimulationGUI simGUI;
 
-    public mainWindow(Intersection modelIntersection) {
+    //Lower Control Panel
+    private JPanel controlPanel;
+    private JButton runSimulation;
+    private JButton stopSimulation;
+    private JButton resetSimulation;
+
+    public mainWindow(Intersection modelIntersection, SimulationEnvironment simulation, String title) {
+
+        super(title);
 
         //Main Menubar Initialisation
-        mainMenuBar = new javax.swing.JMenuBar();
-        fileMenu = new javax.swing.JMenu();
+        mainMenuBar = new JMenuBar();
+        fileMenu = new JMenu();
+        settingsMenu = new JMenu();
 
         //File Menu Initialisation
-        runMenuItem = new javax.swing.JMenuItem();
-        runMultiMenuItem = new javax.swing.JMenuItem();
-        exitMenuItem = new javax.swing.JMenuItem();
+        runMenuItem = new JMenuItem();
+        runMultiMenuItem = new JMenuItem();
+        simRunMenuItem = new JCheckBoxMenuItem();
+        exitMenuItem = new JMenuItem();
        
+        //Settings Menu Initialisation
+        setHLanesMenuItem =  new JMenuItem();
+        setVLanesMenuItem = new JMenuItem();
+        setHProbMenuItem = new JMenuItem();
+        setVProbMenuItem = new JMenuItem();
+
         //Set Window Settings
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         //Set Main MenuBar Text
         fileMenu.setText("File");
+        settingsMenu.setText("Settings");
 
         //Set File Menu Text
         runMenuItem.setText("Run One Cycle");
         runMultiMenuItem.setText("Run Many Cycles");
+        simRunMenuItem.setText("Run Simulation");
         exitMenuItem.setText("Exit");
+
+        //Set Settings Menu Text
+        setHLanesMenuItem.setText("No. Horizontal Lanes");
+        setVLanesMenuItem.setText("No. Vertical Lanes");
+        setHProbMenuItem.setText("Horizontal Car Regularity");
+        setVProbMenuItem.setText("Vertical Car Regularity");
 
         //Construct File Menu
         fileMenu.add(runMenuItem);
         fileMenu.add(runMultiMenuItem);
+        fileMenu.add(new JSeparator());
+        fileMenu.add(simRunMenuItem);
+        fileMenu.add(new JSeparator());
         fileMenu.add(exitMenuItem);
+
+        //Construct Settings Menu
+        settingsMenu.add(setHLanesMenuItem);
+        settingsMenu.add(setVLanesMenuItem);
+        settingsMenu.add(new JSeparator());
+        settingsMenu.add(setHProbMenuItem);
+        settingsMenu.add(setVProbMenuItem);
 
         //Construct Menubar
         mainMenuBar.add(fileMenu);
+        mainMenuBar.add(settingsMenu);
         setJMenuBar(mainMenuBar);
-
-        this.setName("CP2013 Traffic Simulation");
 
         simGUI = new SimulationGUI(modelIntersection);
         getContentPane().add(BorderLayout.CENTER, simGUI);
 
+        // Construct Lower JPanel
+        controlPanel = new JPanel();
+        runSimulation = new JButton("Run");
+        stopSimulation = new JButton("Stop");
+
+        controlPanel.add(runSimulation);
+        controlPanel.add(stopSimulation);
+        stopSimulation.setVisible(false);
+        add(controlPanel, BorderLayout.SOUTH);
+
+        //Add Event Handlers
+        stopSimulation.addActionListener(new simulationToggle(this, simulation));
+        runSimulation.addActionListener(new simulationToggle(this, simulation));
+        simRunMenuItem.addActionListener(new simulationToggle(this, simulation));
+
+
         //Pack the window
         pack();
     }
+    
+    public void toggleSimulation(Boolean condition) {
+        simRunMenuItem.setSelected(condition);
+        runSimulation.setVisible(!condition);
+        stopSimulation.setVisible(condition);
+    }
+
 }
+
+ class simulationToggle implements ActionListener {
+
+     mainWindow window;
+     SimulationEnvironment simulation;
+
+    simulationToggle(mainWindow window, SimulationEnvironment simulation) {
+        this.window = window;
+        this.simulation = simulation;
+    }
+
+    public void actionPerformed(ActionEvent e) {
+        window.toggleSimulation(!Settings.getSimSettings().getSimulationRunning());
+        if(Settings.getSimSettings().getSimulationRunning()) {
+            try {
+                simulation.stop();
+            } catch (InterruptedException ex) {
+                Logger.getLogger(simulationToggle.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else {
+            try {
+                simulation.run();
+            } catch (InterruptedException ex) {
+                Logger.getLogger(simulationToggle.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+    }
+
+ }

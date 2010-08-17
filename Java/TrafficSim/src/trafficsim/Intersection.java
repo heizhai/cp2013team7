@@ -48,5 +48,10 @@ public class Intersection {
         this.hRoadIntersection = hRoadIntersection;
     }
 
+    public void reset() {
+vRoadIntersection = new RoadIntersection(Settings.getSimSettings().getvLaneStopLine(), Settings.getSimSettings().getVLanes(), Settings.getSimSettings().getvLaneLength());
+        hRoadIntersection = new RoadIntersection(Settings.getSimSettings().gethLaneStopLine(), Settings.getSimSettings().getHLanes(), Settings.getSimSettings().gethLaneLength());
+    }
+
 
 }

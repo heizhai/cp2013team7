@@ -15,6 +15,7 @@ public class SimulationGUI extends JPanel {
         this.model = modelIntersection;
     }
 
+    @SuppressWarnings("empty-statement")
     public void paintComponent(Graphics g) {
 
         //Setup Background
@@ -29,8 +30,7 @@ public class SimulationGUI extends JPanel {
         int hRoadY = (this.getHeight()/2)-(hRoadWidth/2);
         int hRoadX = (this.getWidth()-Settings.getSimSettings().gethLaneLength())/2;
 
-        int vRoadY;
-        int vRoadX;
+        int vRoadY, vRoadX;
 
         int xOffset = (this.getWidth()-Settings.getSimSettings().gethLaneLength())/2;
         int yOffset = (this.getHeight()-Settings.getSimSettings().getvLaneLength())/2;
@@ -56,7 +56,101 @@ public class SimulationGUI extends JPanel {
         renderCars(model.gethRoadIntersection().getRoad(), g, hRoadX, hRoadY, Settings.ROAD_EAST_WEST);
         //Render Vertical Road Cars
         renderCars(model.getvRoadIntersection().getRoad(), g, vRoadX, vRoadY, Settings.ROAD_SOUTH_NORTH);
-        
+
+        //Render Traffic Lights
+        g.setColor(Color.BLACK);
+        int lightPadding = 20;
+        int lightWidth = 25;
+        int lightHeight = 50;
+        int lightCorner = 5;
+        int lightDiameter = 10;
+        int hLightX, hLightY, vLightX, vLightY;
+        double[] hLightOrder = {0.75, 0.5, 0.25}, vLightOrder = {0.75, 0.5, 0.25};
+
+        if(model.gethRoadIntersection().getRoad().getTrafficDirection() == Settings.TRAFFIC_EAST_SOUTH) {
+            hLightX = vRoadX+lightPadding+vRoadWidth;
+            hLightY = hRoadY-lightPadding-lightWidth;
+            hLightOrder[0] = 0.25;
+            hLightOrder[2] = 0.75;
+        } else {
+            hLightX = vRoadX-(lightHeight+lightPadding);
+            hLightY = hRoadY+hRoadWidth+lightPadding;
+            hLightOrder[0] = 0.75;
+            hLightOrder[2] = 0.25;
+        }
+
+        //Green Horizontal Level
+
+        g.fillRoundRect(hLightX, hLightY, lightHeight, lightWidth, lightCorner, lightCorner);
+        if(model.gethRoadIntersection().getLightState() == model.gethRoadIntersection().GREEN_LIGHT) {
+            g.setColor(Color.GREEN);
+        } else {
+            g.setColor(Color.GRAY);
+        }
+        g.fillOval((int) (hLightX+(hLightOrder[0]*lightHeight-.5*lightDiameter)), (int) (hLightY+(.5*lightWidth-.5*lightDiameter)) , lightDiameter, lightDiameter);
+
+        // Yellow Horizontal Light
+        if(model.gethRoadIntersection().getLightState() == model.gethRoadIntersection().YELLOW_LIGHT) {
+            g.setColor(Color.ORANGE);
+        } else {
+            g.setColor(Color.GRAY);
+        }
+        g.fillOval((int) (hLightX+(hLightOrder[1]*lightHeight-.5*lightDiameter)), (int) (hLightY+(.5*lightWidth-.5*lightDiameter)) , lightDiameter, lightDiameter);
+
+        // Red Horizontal Light
+        if(model.gethRoadIntersection().getLightState() == model.gethRoadIntersection().RED_LIGHT) {
+            g.setColor(Color.RED);
+        } else {
+            g.setColor(Color.GRAY);
+        }
+        g.fillOval((int) (hLightX+(hLightOrder[2]*lightHeight-.5*lightDiameter)), (int) (hLightY+(.5*lightWidth-.5*lightDiameter)) , lightDiameter, lightDiameter);
+
+
+        if(model.gethRoadIntersection().getRoad().getTrafficDirection() == Settings.TRAFFIC_EAST_SOUTH) {
+            vLightX = vRoadX+lightPadding+vRoadWidth;
+            vLightY = hRoadY+lightPadding+hRoadWidth;
+            vLightOrder[0] = 0.25;
+            vLightOrder[2] = 0.75;
+        } else {
+            vLightX = vRoadX-(lightWidth+lightPadding);
+            vLightY = hRoadY-(lightHeight+lightPadding);
+            vLightOrder[0] = 0.75;
+            vLightOrder[2] = 0.25;
+        }
+
+        //Green Horizontal Level
+        g.setColor(Color.BLACK);
+        g.fillRoundRect(vLightX, vLightY, lightWidth, lightHeight, lightCorner, lightCorner);
+        if(model.gethRoadIntersection().getLightState() == model.gethRoadIntersection().GREEN_LIGHT) {
+            g.setColor(Color.GREEN);
+        } else {
+            g.setColor(Color.GRAY);
+        }
+        g.fillOval((int) (vLightX+(.5*lightWidth-.5*lightDiameter)), (int) (vLightY+(vLightOrder[0]*lightHeight-.5*lightDiameter)), lightDiameter, lightDiameter);
+
+        // Yellow Horizontal Light
+        if(model.gethRoadIntersection().getLightState() == model.gethRoadIntersection().YELLOW_LIGHT) {
+            g.setColor(Color.ORANGE);
+        } else {
+            g.setColor(Color.GRAY);
+        }
+        g.fillOval((int) (vLightX+(.5*lightWidth-.5*lightDiameter)), (int) (vLightY+(vLightOrder[1]*lightHeight-.5*lightDiameter)), lightDiameter, lightDiameter);
+
+        // Red Horizontal Light
+        if(model.gethRoadIntersection().getLightState() == model.gethRoadIntersection().RED_LIGHT) {
+            g.setColor(Color.RED);
+        } else {
+            g.setColor(Color.GRAY);
+        }
+        g.fillOval((int) (vLightX+(.5*lightWidth-.5*lightDiameter)), (int) (vLightY+(vLightOrder[2]*lightHeight-.5*lightDiameter)), lightDiameter, lightDiameter);
+
+
+
+        if(model.getvRoadIntersection().getRoad().getTrafficDirection() == Settings.TRAFFIC_EAST_SOUTH) {
+            //vRoadY = hRoadY-model.getvRoadIntersection().getIntersectionStopLine();
+        } else {
+            //vRoadY = hRoadY-(model.getvRoadIntersection().getIntersectionStopLine()+hRoadWidth);
+        }
     }
 
     private void renderCars(Road renderRoad, Graphics g, int roadX, int roadY, Boolean roadOrient) {

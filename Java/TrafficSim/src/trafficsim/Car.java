@@ -8,14 +8,14 @@ class Car {
     
 
     private int lanePosition;
-    private Boolean stopped;
+    private Boolean stopped = false;
 
     public Car(int lanePosition) {
         this.lanePosition = lanePosition;
     }
 
     public Boolean intersects(Car car) {
-        if(((this.getLanePosition() < (car.getLanePosition()+Settings.getSimSettings().CAR_LENGTH)) && ((car.getLanePosition()+Settings.getSimSettings().CAR_LENGTH) > this.getLanePosition())) || ((car.getLanePosition() < (this.getLanePosition()+Settings.getSimSettings().CAR_LENGTH)) && ((this.getLanePosition()+Settings.getSimSettings().CAR_LENGTH) > this.getLanePosition()))) {
+        if(((car.getLanePosition() < (this.getLanePosition()+Settings.CAR_LENGTH)) && ((this.getLanePosition()+Settings.CAR_LENGTH) < (car.getLanePosition()+Settings.CAR_LENGTH)) || ((car.getLanePosition() < this.getLanePosition()) && (this.getLanePosition() < (car.getLanePosition()+Settings.CAR_LENGTH))))) {
             return true;
         } else {
             return false;
@@ -23,7 +23,7 @@ class Car {
     }
 
     public Boolean intersects(int lanePosition) {
-        if((this.getLanePosition() < lanePosition) && (lanePosition > this.getLanePosition())) {
+        if((this.getLanePosition() < lanePosition) && (lanePosition < (this.getLanePosition()+Settings.CAR_LENGTH))) {
             return true;
         } else {
             return false;

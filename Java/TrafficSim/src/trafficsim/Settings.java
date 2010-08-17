@@ -23,6 +23,7 @@ public class Settings {
     private int hLaneStopLine = 250;
     private float hCarProbability = 1;
     private float vCarProbability = 1;
+    private Boolean simulationRunning = false;
 
     //Static
     public static final int LANE_WIDTH = 15;
@@ -156,6 +157,20 @@ public class Settings {
      */
     public void sethLaneStopLine(int hLaneStopLine) {
         this.hLaneStopLine = hLaneStopLine;
+    }
+
+    /**
+     * @return the simulationRunning
+     */
+    public Boolean getSimulationRunning() {
+        return simulationRunning;
+    }
+
+    /**
+     * @param simulationRunning the simulationRunning to set
+     */
+    public void setSimulationRunning(Boolean simulationRunning) {
+        this.simulationRunning = simulationRunning;
     }
 
 }

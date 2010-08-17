@@ -1,6 +1,6 @@
 package trafficsim;
 
-import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Class which represents the roads for the simulation, containing Lanes of traffic and associated with the relevant RoadIntersection
@@ -8,7 +8,7 @@ import java.util.ArrayList;
  * @author Twistie
  */
 class Road {
-    private ArrayList<Lane> lanes = new ArrayList<Lane>();
+    private CopyOnWriteArrayList<Lane> lanes = new CopyOnWriteArrayList<Lane>();
     private Boolean trafficDirection;
     private int roadLength;
 
@@ -21,15 +21,20 @@ class Road {
         for(int i = 0; i < noLanes; i++) {
             addLane(new Lane());
         }
-
+        trafficDirection = Settings.TRAFFIC_EAST_SOUTH;
         this.roadLength = roadLength;
     }
 
-    public ArrayList<Lane> getNeighbouringLanes(Lane lane) {
-        ArrayList<Lane> neighbours = new ArrayList<Lane>();
-        neighbours.add(this.getLanes().get(this.getLanes().indexOf(lane)-1));
-        neighbours.add(this.getLanes().get(this.getLanes().indexOf(lane)+1));
-        return neighbours;
+    public CopyOnWriteArrayList<Lane> getNeighbouringLanes(Lane lane) {
+        
+            CopyOnWriteArrayList<Lane> neighbours = new CopyOnWriteArrayList<Lane>();
+            if ((this.getLanes().indexOf(lane)-1) > 0) {
+                neighbours.add(this.getLanes().get(this.getLanes().indexOf(lane)-1));
+            }
+            if ((this.getLanes().indexOf(lane)+1 < this.getLanes().size())) {
+                neighbours.add(this.getLanes().get(this.getLanes().indexOf(lane)+1));
+            }
+            return neighbours;
     }
 
     /**
@@ -37,7 +42,7 @@ class Road {
      *
      * @param lanes the lanes to set
      */
-    public void addLane(Lane lane) {
+    public synchronized void addLane(Lane lane) {
         getLanes().add(lane);
     }
 
@@ -46,7 +51,7 @@ class Road {
      *
      * @param lanes the lanes to set
      */
-    public void removeLane() {
+    public synchronized void removeLane() {
         getLanes().remove((this.getLanes().size()-1));
     }
 
@@ -95,8 +100,22 @@ class Road {
     /**
      * @return the lanes
      */
-    public ArrayList<Lane> getLanes() {
+    public CopyOnWriteArrayList<Lane> getLanes() {
         return lanes;
+    }
+
+    /**
+     * @return the number of lanes
+     */
+    public int getNoLanes() {
+        return lanes.size();
+    }
+
+    /**
+     * @return the lane with the given index
+     */
+    public Lane getLane(int laneNo) {
+        return lanes.get(laneNo);
     }
 
 }
