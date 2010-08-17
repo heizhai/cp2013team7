@@ -22,8 +22,8 @@ class Car {
         }
     }
 
-    public Boolean intersects(int lanePosition) {
-        if((this.getLanePosition() < lanePosition) && (lanePosition < (this.getLanePosition()+Settings.CAR_LENGTH))) {
+    public Boolean intersects(int lanePosition, Boolean direction) {
+        if(((this.getLanePosition() == lanePosition) && (direction == Settings.TRAFFIC_WEST_NORTH)) || ((lanePosition == (this.getLanePosition()+Settings.CAR_LENGTH) && (direction == Settings.TRAFFIC_EAST_SOUTH)))) {
             return true;
         } else {
             return false;

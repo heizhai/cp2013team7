@@ -1,8 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package trafficsim;
 
 /**
@@ -34,12 +29,13 @@ public class Settings {
     public static final Boolean TRAFFIC_EAST_SOUTH = true;
     public static final Boolean TRAFFIC_WEST_NORTH = false;
     public static final Boolean ROAD_SOUTH_NORTH = true;
-    public static final Boolean ROAD_EAST_WEST = false; 
+    public static final Boolean ROAD_EAST_WEST = false;
+    public static final int FRAME_LENGTH =  100;
 
     protected void Settings() {
         //Prevents Instantiation
     }
-
+ 
     public static synchronized Settings getSimSettings() {
         if (simulationSettings == null) {
             simulationSettings = new Settings();

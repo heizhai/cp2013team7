@@ -15,6 +15,7 @@ import javax.swing.JPanel;
 
 
 /**
+ * JFrame Class which builds the main window of the Traffic Simulation Program *
  *
  * @author Tristan Davey
  */
@@ -44,9 +45,9 @@ public class mainWindow extends javax.swing.JFrame {
 
     //Lower Control Panel
     private JPanel controlPanel;
-    private JButton runSimulation;
-    private JButton stopSimulation;
-    private JButton resetSimulation;
+    private JButton runSimulationButton;
+    private JButton stopSimulationButton;
+    private JButton lightsCycleButton;
 
     public mainWindow(Intersection modelIntersection, SimulationEnvironment simulation, String title) {
 
@@ -113,18 +114,21 @@ public class mainWindow extends javax.swing.JFrame {
 
         // Construct Lower JPanel
         controlPanel = new JPanel();
-        runSimulation = new JButton("Run");
-        stopSimulation = new JButton("Stop");
+        runSimulationButton = new JButton("Run");
+        stopSimulationButton = new JButton("Stop");
+        lightsCycleButton = new JButton("Cycle Lights");
 
-        controlPanel.add(runSimulation);
-        controlPanel.add(stopSimulation);
-        stopSimulation.setVisible(false);
+        controlPanel.add(BorderLayout.CENTER, runSimulationButton);
+        controlPanel.add(BorderLayout.CENTER, stopSimulationButton);
+        controlPanel.add(BorderLayout.EAST, lightsCycleButton);
+        stopSimulationButton.setVisible(false);
         add(controlPanel, BorderLayout.SOUTH);
 
         //Add Event Handlers
-        stopSimulation.addActionListener(new simulationToggle(this, simulation));
-        runSimulation.addActionListener(new simulationToggle(this, simulation));
+        stopSimulationButton.addActionListener(new simulationToggle(this, simulation));
+        runSimulationButton.addActionListener(new simulationToggle(this, simulation));
         simRunMenuItem.addActionListener(new simulationToggle(this, simulation));
+        lightsCycleButton.addActionListener(new lightsCycleListener(this, simulation));
 
 
         //Pack the window
@@ -133,12 +137,21 @@ public class mainWindow extends javax.swing.JFrame {
     
     public void toggleSimulation(Boolean condition) {
         simRunMenuItem.setSelected(condition);
-        runSimulation.setVisible(!condition);
-        stopSimulation.setVisible(condition);
+        runSimulationButton.setVisible(!condition);
+        stopSimulationButton.setVisible(condition);
+    }
+
+    public void lightCycle() {
+        lightsCycleButton.setEnabled(false);
     }
 
 }
 
+/**
+ * ActionListener implementing class to toggle the simulation from running to stopped or vica-versa.
+ *
+ * @author Tristan Davey
+ */
  class simulationToggle implements ActionListener {
 
      mainWindow window;
@@ -168,3 +181,26 @@ public class mainWindow extends javax.swing.JFrame {
     }
 
  }
+
+
+ /**
+ * ActionListener implementing class which handles button presses on the buttons to make the traffic lights change
+ *
+ * @author Tristan Davey
+ */
+ class lightsCycleListener implements ActionListener {
+
+     mainWindow window;
+     SimulationEnvironment simulation;
+
+    public lightsCycleListener(mainWindow window, SimulationEnvironment simulation) {
+        this.window = window;
+        this.simulation = simulation;
+    }
+
+    public void actionPerformed(ActionEvent e) {
+        simulation.lightCycle();
+    }
+
+}
+

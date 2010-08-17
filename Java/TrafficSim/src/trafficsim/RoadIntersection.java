@@ -58,6 +58,9 @@ public class RoadIntersection {
             lightState = 0;
         }
         this.lightState = lightState;
+        if (this.lightState == GREEN_LIGHT) {
+            carStoppedReset();
+        }
     }
 
     /**
@@ -76,6 +79,19 @@ public class RoadIntersection {
      */
     public void setIntersectionStopLine(int intersectionStopLine) {
         this.intersectionStopLine = intersectionStopLine;
+    }
+
+    /**
+     * Sets the location of the Intersection's stop line on the road.
+     *
+     * @param intersectionStopLine the intersectionStopLine to set
+     */
+    public void carStoppedReset() {
+        for(Lane l: this.road.getLanes()) {
+            for(Car c: l.getCars()) {
+                c.setStopped(false);
+            }
+        }
     }
 
 }

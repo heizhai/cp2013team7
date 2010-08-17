@@ -121,7 +121,7 @@ public class SimulationGUI extends JPanel {
         //Green Horizontal Level
         g.setColor(Color.BLACK);
         g.fillRoundRect(vLightX, vLightY, lightWidth, lightHeight, lightCorner, lightCorner);
-        if(model.gethRoadIntersection().getLightState() == model.gethRoadIntersection().GREEN_LIGHT) {
+        if(model.getvRoadIntersection().getLightState() == model.gethRoadIntersection().GREEN_LIGHT) {
             g.setColor(Color.GREEN);
         } else {
             g.setColor(Color.GRAY);
@@ -129,7 +129,7 @@ public class SimulationGUI extends JPanel {
         g.fillOval((int) (vLightX+(.5*lightWidth-.5*lightDiameter)), (int) (vLightY+(vLightOrder[0]*lightHeight-.5*lightDiameter)), lightDiameter, lightDiameter);
 
         // Yellow Horizontal Light
-        if(model.gethRoadIntersection().getLightState() == model.gethRoadIntersection().YELLOW_LIGHT) {
+        if(model.getvRoadIntersection().getLightState() == model.gethRoadIntersection().YELLOW_LIGHT) {
             g.setColor(Color.ORANGE);
         } else {
             g.setColor(Color.GRAY);
@@ -137,20 +137,18 @@ public class SimulationGUI extends JPanel {
         g.fillOval((int) (vLightX+(.5*lightWidth-.5*lightDiameter)), (int) (vLightY+(vLightOrder[1]*lightHeight-.5*lightDiameter)), lightDiameter, lightDiameter);
 
         // Red Horizontal Light
-        if(model.gethRoadIntersection().getLightState() == model.gethRoadIntersection().RED_LIGHT) {
+        if(model.getvRoadIntersection().getLightState() == model.gethRoadIntersection().RED_LIGHT) {
             g.setColor(Color.RED);
         } else {
             g.setColor(Color.GRAY);
         }
         g.fillOval((int) (vLightX+(.5*lightWidth-.5*lightDiameter)), (int) (vLightY+(vLightOrder[2]*lightHeight-.5*lightDiameter)), lightDiameter, lightDiameter);
 
-
-
-        if(model.getvRoadIntersection().getRoad().getTrafficDirection() == Settings.TRAFFIC_EAST_SOUTH) {
-            //vRoadY = hRoadY-model.getvRoadIntersection().getIntersectionStopLine();
-        } else {
-            //vRoadY = hRoadY-(model.getvRoadIntersection().getIntersectionStopLine()+hRoadWidth);
-        }
+        g.setColor(Color.LIGHT_GRAY);
+        g.fillRect(0, 0, hRoadX, this.getHeight());
+        g.fillRect((hRoadX+Settings.getSimSettings().gethLaneLength()), 0, this.getWidth(), this.getHeight());
+        g.fillRect(0, 0, this.getWidth(), vRoadY);
+        g.fillRect(0, (vRoadY+Settings.getSimSettings().gethLaneLength()), this.getWidth(), this.getHeight());
     }
 
     private void renderCars(Road renderRoad, Graphics g, int roadX, int roadY, Boolean roadOrient) {

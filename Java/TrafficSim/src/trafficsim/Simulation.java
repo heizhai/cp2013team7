@@ -34,7 +34,7 @@ class SimulationEnvironment {
 
     private Intersection modelIntersection;
     private mainWindow window;
-    private Timer frameTimer = new Timer();
+    private Timer frameTimer;
     private Timer lightTimer;
 
 
@@ -46,11 +46,19 @@ class SimulationEnvironment {
     /**
      * @param runCycles
      */
-    public void lightCycle(int runCycles) {
-        
+    public void lightCycle() {
+        lightTimer = new Timer();
+        if(modelIntersection.gethRoadIntersection().getLightState() == modelIntersection.gethRoadIntersection().GREEN_LIGHT) {
+            modelIntersection.gethRoadIntersection().setLightState(modelIntersection.gethRoadIntersection().YELLOW_LIGHT);
+            lightTimer.schedule(new lightCycle(modelIntersection), ((((modelIntersection.getvRoadIntersection().getRoad().getNoLanes()*Settings.LANE_WIDTH)/Settings.CAR_MOVE)+Settings.CAR_LENGTH)*Settings.FRAME_LENGTH));
+        } else if (modelIntersection.getvRoadIntersection().getLightState() == modelIntersection.gethRoadIntersection().GREEN_LIGHT) {
+            modelIntersection.getvRoadIntersection().setLightState(modelIntersection.getvRoadIntersection().YELLOW_LIGHT);
+            lightTimer.schedule(new lightCycle(modelIntersection), ((((modelIntersection.gethRoadIntersection().getRoad().getNoLanes()*Settings.LANE_WIDTH)/Settings.CAR_MOVE)+Settings.CAR_LENGTH)*Settings.FRAME_LENGTH));
+        }
     }
 
     public void run() throws InterruptedException {
+        frameTimer = new Timer();
         Settings.getSimSettings().setSimulationRunning(true);
         frameTimer.scheduleAtFixedRate(new simulationFrame(modelIntersection, window), 0, 100);
     }
@@ -59,7 +67,6 @@ class SimulationEnvironment {
         Settings.getSimSettings().setSimulationRunning(false);
         frameTimer.cancel();
         modelIntersection.reset();
-        frameTimer = new Timer();
     }
 
     void setWindow(mainWindow window) {
@@ -126,7 +133,7 @@ class simulationFrame extends TimerTask {
                 if(c.getStopped() == false) {
                     c.moveCar(trafficCycleDistance);
 
-                    if(c.intersects(roadIntersection.getIntersectionStopLine()) && (roadIntersection.getLightState() != RoadIntersection.GREEN_LIGHT)) {
+                    if(c.intersects(roadIntersection.getIntersectionStopLine(), roadIntersection.getRoad().getTrafficDirection()) && (roadIntersection.getLightState() != RoadIntersection.GREEN_LIGHT)) {
                         c.setStopped(true);
                         c.moveCar(-(trafficCycleDistance));
                     }
@@ -154,6 +161,23 @@ class simulationFrame extends TimerTask {
        }
     }
 
+}
 
+class lightCycle extends TimerTask {
 
+        Intersection intersection;
+
+        lightCycle(Intersection intersection) {
+            this.intersection = intersection;
+        }
+
+        public void run() {
+           if(intersection.gethRoadIntersection().getLightState() == intersection.gethRoadIntersection().YELLOW_LIGHT) {
+               intersection.gethRoadIntersection().setLightState(intersection.gethRoadIntersection().RED_LIGHT);
+               intersection.getvRoadIntersection().setLightState(intersection.getvRoadIntersection().GREEN_LIGHT);
+           } else if (intersection.getvRoadIntersection().getLightState() == intersection.getvRoadIntersection().YELLOW_LIGHT) {
+               intersection.getvRoadIntersection().setLightState(intersection.getvRoadIntersection().RED_LIGHT);
+               intersection.gethRoadIntersection().setLightState(intersection.gethRoadIntersection().GREEN_LIGHT);
+           }
+        }
 }

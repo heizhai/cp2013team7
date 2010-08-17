@@ -18,6 +18,7 @@ public class Intersection {
     Intersection() {
         vRoadIntersection = new RoadIntersection(Settings.getSimSettings().getvLaneStopLine(), Settings.getSimSettings().getVLanes(), Settings.getSimSettings().getvLaneLength());
         hRoadIntersection = new RoadIntersection(Settings.getSimSettings().gethLaneStopLine(), Settings.getSimSettings().getHLanes(), Settings.getSimSettings().gethLaneLength());
+        vRoadIntersection.setLightState(vRoadIntersection.GREEN_LIGHT);
     }
 
     /**
@@ -49,8 +50,9 @@ public class Intersection {
     }
 
     public void reset() {
-vRoadIntersection = new RoadIntersection(Settings.getSimSettings().getvLaneStopLine(), Settings.getSimSettings().getVLanes(), Settings.getSimSettings().getvLaneLength());
+        vRoadIntersection = new RoadIntersection(Settings.getSimSettings().getvLaneStopLine(), Settings.getSimSettings().getVLanes(), Settings.getSimSettings().getvLaneLength());
         hRoadIntersection = new RoadIntersection(Settings.getSimSettings().gethLaneStopLine(), Settings.getSimSettings().getHLanes(), Settings.getSimSettings().gethLaneLength());
+        vRoadIntersection.setLightState(vRoadIntersection.GREEN_LIGHT);
     }
 
 
