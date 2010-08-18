@@ -16,8 +16,8 @@ public class Settings {
     private int hLaneLength = 500;
     private int vLaneStopLine = 250;
     private int hLaneStopLine = 250;
-    private float hCarProbability = 1;
-    private float vCarProbability = 1;
+    private double hCarProbability = 1;
+    private double vCarProbability = 1;
     private Boolean simulationRunning = false;
 
     //Static
@@ -31,6 +31,13 @@ public class Settings {
     public static final Boolean ROAD_SOUTH_NORTH = true;
     public static final Boolean ROAD_EAST_WEST = false;
     public static final int FRAME_LENGTH =  100;
+    public static final int[] V_LANE_BOUNDS = {1,4};
+    public static final int[] H_LANE_BOUNDS = {1,3};
+    public static final double[] H_CAR_PROBABILITY_BOUNDS = {0.0, 1.0};
+    public static final double[] V_CAR_PROBABILITY_BOUNDS = {0.0, 1.0};
+    public static final int CAR_FREQUENCY = 48;
+    public static final int[] LIGHT_CYCLE_BOUNDS = {1,10};
+    public static final int LIGHT_CYCLE_TIME = 15000;
 
     protected void Settings() {
         //Prevents Instantiation
@@ -74,28 +81,28 @@ public class Settings {
     /**
      * @return the hCarProbability
      */
-    public float getHCarProbability() {
+    public double getHCarProbability() {
         return hCarProbability;
     }
 
     /**
      * @param hCarProbability the hCarProbability to set
      */
-    public void setHCarProbability(float hCarProbability) {
+    public void setHCarProbability(double hCarProbability) {
         this.hCarProbability = hCarProbability;
     }
 
     /**
      * @return the vCarProbability
      */
-    public float getVCarProbability() {
+    public double getVCarProbability() {
         return vCarProbability;
     }
 
     /**
      * @param vCarProbability the vCarProbability to set
      */
-    public void setVCarProbability(float vCarProbability) {
+    public void setVCarProbability(double vCarProbability) {
         this.vCarProbability = vCarProbability;
     }
 

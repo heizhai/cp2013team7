@@ -12,6 +12,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JOptionPane;
 
 
 /**
@@ -129,7 +130,14 @@ public class mainWindow extends javax.swing.JFrame {
         runSimulationButton.addActionListener(new simulationToggle(this, simulation));
         simRunMenuItem.addActionListener(new simulationToggle(this, simulation));
         lightsCycleButton.addActionListener(new lightsCycleListener(this, simulation));
+        runMenuItem.addActionListener(new lightsCycleListener(this, simulation));
+        runMultiMenuItem.addActionListener(new multiLightsCycleListener(this, simulation));
+        setHLanesMenuItem.addActionListener(new settingsHLanesListener(this));
+        setVLanesMenuItem.addActionListener(new settingsVLanesListener(this));
+        setHProbMenuItem.addActionListener(new settingsHProbListener());
+        setVProbMenuItem.addActionListener(new settingsVProbListener());
 
+        lightCycle(false);
 
         //Pack the window
         pack();
@@ -139,10 +147,13 @@ public class mainWindow extends javax.swing.JFrame {
         simRunMenuItem.setSelected(condition);
         runSimulationButton.setVisible(!condition);
         stopSimulationButton.setVisible(condition);
+        settingsMenu.setEnabled(!condition);
     }
 
-    public void lightCycle() {
-        lightsCycleButton.setEnabled(false);
+    public void lightCycle(Boolean setState) {
+        lightsCycleButton.setEnabled(setState);
+        runMenuItem.setEnabled(setState);
+        runMultiMenuItem.setEnabled(setState);
     }
 
 }
@@ -177,7 +188,6 @@ public class mainWindow extends javax.swing.JFrame {
                 Logger.getLogger(simulationToggle.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-
     }
 
  }
@@ -199,8 +209,124 @@ public class mainWindow extends javax.swing.JFrame {
     }
 
     public void actionPerformed(ActionEvent e) {
-        simulation.lightCycle();
+        simulation.lightCycle(false);
+        window.lightCycle(false);
     }
 
 }
 
+ /**
+ * ActionListener implementing class which handles button presses on the buttons to make the traffic lights change
+ *
+ * @author Tristan Davey
+ */
+ class multiLightsCycleListener implements ActionListener {
+
+     mainWindow window;
+     SimulationEnvironment simulation;
+
+    public multiLightsCycleListener(mainWindow window, SimulationEnvironment simulation) {
+        this.window = window;
+        this.simulation = simulation;
+    }
+
+    public void actionPerformed(ActionEvent e) {
+        String label = "Number of Cycles ("+Settings.LIGHT_CYCLE_BOUNDS[0]+"-"+Settings.LIGHT_CYCLE_BOUNDS[1]+"):";
+        int value = Short.parseShort(JOptionPane.showInputDialog(null, label));
+        if((value < Settings.LIGHT_CYCLE_BOUNDS[0]) && (value > Settings.LIGHT_CYCLE_BOUNDS[1])) {
+            JOptionPane.showMessageDialog(null, "Enter a value between "+Settings.H_LANE_BOUNDS[0]+" and "+Settings.H_LANE_BOUNDS[1]);
+        } else {
+            simulation.multiLightCycle(value);
+            window.lightCycle(false);
+        }
+    }
+
+}
+
+ /**
+ * ActionListener implementing class which handles the pressing of the "Set Horizontal Lanes" button.
+ *
+ * @author Tristan Davey
+ */
+ class settingsHLanesListener implements ActionListener {
+
+    mainWindow window;
+
+    settingsHLanesListener(mainWindow window) {
+        this.window = window;
+    }
+
+    public void actionPerformed(ActionEvent e) {
+        String label = "Horizontal Lanes ("+Settings.H_LANE_BOUNDS[0]+"-"+Settings.H_LANE_BOUNDS[1]+"):";
+        Short value = Short.parseShort(JOptionPane.showInputDialog(null, label));
+        if((value < Settings.H_LANE_BOUNDS[0]) && (value > Settings.H_LANE_BOUNDS[1])) {
+            JOptionPane.showMessageDialog(null, "Enter a value between "+Settings.H_LANE_BOUNDS[0]+" and "+Settings.H_LANE_BOUNDS[1]);
+        }
+        Settings.getSimSettings().setHLanes(value);
+        window.repaint();
+    }
+
+}
+
+ /**
+ * ActionListener implementing class which handles the pressing of the "Set Vertical Lanes" button.
+ *
+ * @author Tristan Davey
+ */
+ class settingsVLanesListener implements ActionListener {
+
+    mainWindow window;
+
+    settingsVLanesListener(mainWindow window) {
+        this.window = window;
+    }
+
+    public void actionPerformed(ActionEvent e) {
+        String label = "Vertical Lanes ("+Settings.V_LANE_BOUNDS[0]+"-"+Settings.V_LANE_BOUNDS[1]+"):";
+        Short value = Short.parseShort(JOptionPane.showInputDialog(null, label));
+        if((value < Settings.V_LANE_BOUNDS[0]) && (value > Settings.V_LANE_BOUNDS[1])) {
+            JOptionPane.showMessageDialog(null, "Enter a value between "+Settings.V_LANE_BOUNDS[0]+" and "+Settings.V_LANE_BOUNDS[1]);
+        }
+        Settings.getSimSettings().setVLanes(value);
+        window.repaint();
+    }
+
+}
+
+ /**
+ * ActionListener implementing class which handles the pressing of the "Horizontal Car " button.
+ *
+ * @author Tristan Davey
+ */
+ class settingsHProbListener implements ActionListener {
+
+    public void actionPerformed(ActionEvent e) {
+        String label = "Horizontal Car Probability ("+Settings.H_CAR_PROBABILITY_BOUNDS[0]+"-"+Settings.H_CAR_PROBABILITY_BOUNDS[1]+"):";
+        Double value = Double.parseDouble(JOptionPane.showInputDialog(null, label));
+        if((value < Settings.H_CAR_PROBABILITY_BOUNDS[0]) && (value > Settings.H_CAR_PROBABILITY_BOUNDS[1])) {
+            JOptionPane.showMessageDialog(null, "Enter a value between "+Settings.H_CAR_PROBABILITY_BOUNDS[0]+" and "+Settings.H_CAR_PROBABILITY_BOUNDS[1]);
+        } else {
+            Settings.getSimSettings().setHCarProbability(value);
+        }
+    }
+
+}
+
+ /**
+ * ActionListener implementing class which handles the pressing of the "Vertical Car Regularity" button.
+ *
+ * @author Tristan Davey
+ */
+ class settingsVProbListener implements ActionListener {
+
+    public void actionPerformed(ActionEvent e) {
+        String label = "Vertical Car Probability ("+Settings.V_CAR_PROBABILITY_BOUNDS[0]+"-"+Settings.V_CAR_PROBABILITY_BOUNDS[1]+"):";
+        Double value = Double.parseDouble(JOptionPane.showInputDialog(null, label));
+        if((value < Settings.V_CAR_PROBABILITY_BOUNDS[0]) && (value > Settings.V_CAR_PROBABILITY_BOUNDS[1])) {
+            JOptionPane.showMessageDialog(null, "Enter a value between "+Settings.V_CAR_PROBABILITY_BOUNDS[0]+" and "+Settings.V_CAR_PROBABILITY_BOUNDS[1]);
+        } else {
+            Settings.getSimSettings().setVCarProbability(value);
+        }
+    }
+
+}

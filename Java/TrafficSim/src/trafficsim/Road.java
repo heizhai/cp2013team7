@@ -5,7 +5,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 /**
  * Class which represents the roads for the simulation, containing Lanes of traffic and associated with the relevant RoadIntersection
  *
- * @author Twistie
+ * @author Tristan Davey
  */
 class Road {
     private CopyOnWriteArrayList<Lane> lanes = new CopyOnWriteArrayList<Lane>();
@@ -28,7 +28,7 @@ class Road {
     public CopyOnWriteArrayList<Lane> getNeighbouringLanes(Lane lane) {
         
             CopyOnWriteArrayList<Lane> neighbours = new CopyOnWriteArrayList<Lane>();
-            if ((this.getLanes().indexOf(lane)-1) > 0) {
+            if ((this.getLanes().indexOf(lane)-1) >= 0) {
                 neighbours.add(this.getLanes().get(this.getLanes().indexOf(lane)-1));
             }
             if ((this.getLanes().indexOf(lane)+1 < this.getLanes().size())) {
