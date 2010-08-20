@@ -1,0 +1,8 @@
+C:\Users\Aiden\Documents\CP2013\TrafficLightSim2\TrafficLightSim2\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\Aiden\Documents\CP2013\TrafficLightSim2\TrafficLightSim2\obj\Debug\TrafficLightSim2.Properties.Resources.resources
+C:\Users\Aiden\Documents\CP2013\TrafficLightSim2\TrafficLightSim2\obj\Debug\TrafficLightSim2.csproj.GenerateResource.Cache
+C:\Users\Aiden\Documents\CP2013\TrafficLightSim2\TrafficLightSim2\bin\Debug\TrafficLightSim2.exe
+C:\Users\Aiden\Documents\CP2013\TrafficLightSim2\TrafficLightSim2\bin\Debug\TrafficLightSim2.pdb
+C:\Users\Aiden\Documents\CP2013\TrafficLightSim2\TrafficLightSim2\obj\Debug\TrafficLightSim2.exe
+C:\Users\Aiden\Documents\CP2013\TrafficLightSim2\TrafficLightSim2\obj\Debug\TrafficLightSim2.pdb
+C:\Users\Aiden\Documents\CP2013\TrafficLightSim2\TrafficLightSim2\obj\Debug\TrafficLightSim2.mainWindow.resources
