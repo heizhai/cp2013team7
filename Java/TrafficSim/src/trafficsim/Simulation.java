@@ -72,9 +72,10 @@ class SimulationEnvironment {
 
     public void run() throws InterruptedException {
         frameTimer = new Timer();
+        this.modelIntersection.reset();
         Settings.getSimSettings().setSimulationRunning(true);
         window.lightCycle(true);
-        frameTimer.scheduleAtFixedRate(new simulationFrame(modelIntersection, window), 0, 100);
+        frameTimer.scheduleAtFixedRate(new simulationFrame(modelIntersection, window), 0, Settings.FRAME_LENGTH);
     }
 
     public void stop() throws InterruptedException {
@@ -139,7 +140,6 @@ class simulationFrame extends TimerTask {
                 modelIntersection.getvRoadIntersection().getRoad().getLane(randV).addCar(new Car(lanePositionV));
             }
         }
-        //TODO: Add Probability
         carFrame(modelIntersection.getvRoadIntersection());
         carFrame(modelIntersection.gethRoadIntersection());
 

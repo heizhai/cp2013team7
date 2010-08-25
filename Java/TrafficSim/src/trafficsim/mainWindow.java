@@ -233,7 +233,7 @@ public class mainWindow extends javax.swing.JFrame {
     public void actionPerformed(ActionEvent e) {
         String label = "Number of Cycles ("+Settings.LIGHT_CYCLE_BOUNDS[0]+"-"+Settings.LIGHT_CYCLE_BOUNDS[1]+"):";
         int value = Short.parseShort(JOptionPane.showInputDialog(null, label));
-        if((value < Settings.LIGHT_CYCLE_BOUNDS[0]) && (value > Settings.LIGHT_CYCLE_BOUNDS[1])) {
+        if((value < Settings.LIGHT_CYCLE_BOUNDS[0]) || (value > Settings.LIGHT_CYCLE_BOUNDS[1])) {
             JOptionPane.showMessageDialog(null, "Enter a value between "+Settings.H_LANE_BOUNDS[0]+" and "+Settings.H_LANE_BOUNDS[1]);
         } else {
             simulation.multiLightCycle(value);
@@ -259,11 +259,12 @@ public class mainWindow extends javax.swing.JFrame {
     public void actionPerformed(ActionEvent e) {
         String label = "Horizontal Lanes ("+Settings.H_LANE_BOUNDS[0]+"-"+Settings.H_LANE_BOUNDS[1]+"):";
         Short value = Short.parseShort(JOptionPane.showInputDialog(null, label));
-        if((value < Settings.H_LANE_BOUNDS[0]) && (value > Settings.H_LANE_BOUNDS[1])) {
+        if((value < Settings.H_LANE_BOUNDS[0]) || (value > Settings.H_LANE_BOUNDS[1])) {
             JOptionPane.showMessageDialog(null, "Enter a value between "+Settings.H_LANE_BOUNDS[0]+" and "+Settings.H_LANE_BOUNDS[1]);
+        } else {
+            Settings.getSimSettings().setHLanes(value);
+            window.repaint();
         }
-        Settings.getSimSettings().setHLanes(value);
-        window.repaint();
     }
 
 }
@@ -284,11 +285,12 @@ public class mainWindow extends javax.swing.JFrame {
     public void actionPerformed(ActionEvent e) {
         String label = "Vertical Lanes ("+Settings.V_LANE_BOUNDS[0]+"-"+Settings.V_LANE_BOUNDS[1]+"):";
         Short value = Short.parseShort(JOptionPane.showInputDialog(null, label));
-        if((value < Settings.V_LANE_BOUNDS[0]) && (value > Settings.V_LANE_BOUNDS[1])) {
+        if((value < Settings.V_LANE_BOUNDS[0]) || (value > Settings.V_LANE_BOUNDS[1])) {
             JOptionPane.showMessageDialog(null, "Enter a value between "+Settings.V_LANE_BOUNDS[0]+" and "+Settings.V_LANE_BOUNDS[1]);
+        } else {
+            Settings.getSimSettings().setVLanes(value);
+            window.repaint();
         }
-        Settings.getSimSettings().setVLanes(value);
-        window.repaint();
     }
 
 }
@@ -303,7 +305,7 @@ public class mainWindow extends javax.swing.JFrame {
     public void actionPerformed(ActionEvent e) {
         String label = "Horizontal Car Probability ("+Settings.H_CAR_PROBABILITY_BOUNDS[0]+"-"+Settings.H_CAR_PROBABILITY_BOUNDS[1]+"):";
         Double value = Double.parseDouble(JOptionPane.showInputDialog(null, label));
-        if((value < Settings.H_CAR_PROBABILITY_BOUNDS[0]) && (value > Settings.H_CAR_PROBABILITY_BOUNDS[1])) {
+        if((value < Settings.H_CAR_PROBABILITY_BOUNDS[0]) || (value > Settings.H_CAR_PROBABILITY_BOUNDS[1])) {
             JOptionPane.showMessageDialog(null, "Enter a value between "+Settings.H_CAR_PROBABILITY_BOUNDS[0]+" and "+Settings.H_CAR_PROBABILITY_BOUNDS[1]);
         } else {
             Settings.getSimSettings().setHCarProbability(value);
@@ -322,7 +324,7 @@ public class mainWindow extends javax.swing.JFrame {
     public void actionPerformed(ActionEvent e) {
         String label = "Vertical Car Probability ("+Settings.V_CAR_PROBABILITY_BOUNDS[0]+"-"+Settings.V_CAR_PROBABILITY_BOUNDS[1]+"):";
         Double value = Double.parseDouble(JOptionPane.showInputDialog(null, label));
-        if((value < Settings.V_CAR_PROBABILITY_BOUNDS[0]) && (value > Settings.V_CAR_PROBABILITY_BOUNDS[1])) {
+        if((value < Settings.V_CAR_PROBABILITY_BOUNDS[0]) || (value > Settings.V_CAR_PROBABILITY_BOUNDS[1])) {
             JOptionPane.showMessageDialog(null, "Enter a value between "+Settings.V_CAR_PROBABILITY_BOUNDS[0]+" and "+Settings.V_CAR_PROBABILITY_BOUNDS[1]);
         } else {
             Settings.getSimSettings().setVCarProbability(value);
