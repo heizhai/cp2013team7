@@ -1,5 +1,8 @@
 package trafficsim;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 /**
  *
  * @author Tristan Davey
@@ -9,6 +12,7 @@ class Car {
 
     private int lanePosition;
     private Boolean stopped = false;
+    private Boolean brokenDown = false;
 
     public Car(int lanePosition) {
         this.lanePosition = lanePosition;
@@ -56,4 +60,41 @@ class Car {
         return this.stopped;
     }
 
+    /**
+     * @return the brokenDown
+     */
+    public Boolean getBrokenDown() {
+        return brokenDown;
+    }
+
+    /**
+     * @param brokenDown the brokenDown to set
+     */
+    public void setBrokenDown(Boolean brokenDown) {
+        this.brokenDown = brokenDown;
+    }
+
+    public void breakdown() {
+        Timer breakdownTimer = new Timer();
+        setBrokenDown(true);
+        breakdownTimer.schedule(new carBreakdownTask(this), Settings.getSimSettings().getBreakdownTime());
+    }
+
+}
+
+/**
+ * Class extended from TimerTask which handles the timed change of traffic lights when a lightChange is processed.
+ *
+ * @author Tristan Davey
+ */
+class carBreakdownTask extends TimerTask {
+
+        Car car;
+
+        carBreakdownTask(Car car) {
+            this.car = car;
+        }
+
+        public void run() {
+        }
 }

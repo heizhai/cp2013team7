@@ -10,14 +10,19 @@ public class Settings {
     //Singleton Instance
     private static Settings simulationSettings = null;
 
-    private short hLanes = 3;
-    private short vLanes = 2;
+    private short hWestLanes = 3;
+    private short hEastLanes = 3;
+    private short vNorthLanes = 2;
+    private short vSouthLanes = 4;
     private int vLaneLength = 500;
     private int hLaneLength = 500;
     private int vLaneStopLine = 250;
     private int hLaneStopLine = 250;
     private double hCarProbability = 1;
     private double vCarProbability = 1;
+    private double breakdownProbability = 0.05;
+    private int breakdownTime = 10000;
+    private Boolean trafficFlow = false;
     private Boolean simulationRunning = false;
 
     //Static
@@ -28,6 +33,8 @@ public class Settings {
     public static final int CAR_MOVE = 1;
     public static final Boolean TRAFFIC_EAST_SOUTH = true;
     public static final Boolean TRAFFIC_WEST_NORTH = false;
+    public static final Boolean TRAFFIC_FLOW_LEFT_HAND_TRAFFIC = false;
+    public static final Boolean TRAFFIC_FLOW_RIGHT_HAND_TRAFFIC = true;
     public static final Boolean ROAD_SOUTH_NORTH = true;
     public static final Boolean ROAD_EAST_WEST = false;
     public static final int FRAME_LENGTH =  100;
@@ -35,6 +42,7 @@ public class Settings {
     public static final int[] H_LANE_BOUNDS = {1,3};
     public static final double[] H_CAR_PROBABILITY_BOUNDS = {0.0, 1.0};
     public static final double[] V_CAR_PROBABILITY_BOUNDS = {0.0, 1.0};
+    public static final double BREAKDOWN_PROBABILITY_LIMIT = 100.00;
     public static final int CAR_FREQUENCY = 48;
     public static final int[] LIGHT_CYCLE_BOUNDS = {1,10};
     public static final int LIGHT_CYCLE_TIME = 15000;
@@ -51,31 +59,59 @@ public class Settings {
     }
 
     /**
-     * @return the hLanes
+     * @return the number of westbound lanes
      */
-    public short getHLanes() {
-        return hLanes;
+    public short getHWestLanes() {
+        return hWestLanes;
     }
 
     /**
-     * @param hLanes the hLanes to set
+     * @param the number of westbound lanes
      */
-    public void setHLanes(short hLanes) {
-        this.hLanes = hLanes;
+    public void setHWestLanes(short hWestLanes) {
+        this.hWestLanes = hWestLanes;
     }
 
     /**
-     * @return the vLanes
+     * @return the number of westbound lanes
      */
-    public short getVLanes() {
-        return vLanes;
+    public short getHEastLanes() {
+        return hEastLanes;
     }
 
     /**
-     * @param vLanes the vLanes to set
+     * @param the number of westbound lanes
      */
-    public void setVLanes(short vLanes) {
-        this.vLanes = vLanes;
+    public void setHEastLanes(short hEastLanes) {
+        this.hEastLanes = hEastLanes;
+    }
+
+    /**
+     * @return the number of northbound lanes
+     */
+    public short getVNorthLanes() {
+        return vNorthLanes;
+    }
+
+    /**
+     * @param the number of northbound lanes
+     */
+    public void setVNorthLanes(short vNorthLanes) {
+        this.vNorthLanes = vNorthLanes;
+    }
+
+    /**
+     * @return the number of southbound vertical lanes
+     */
+    public short getVSouthLanes() {
+        return vSouthLanes;
+    }
+
+    /**
+     * @param the number of southbound vertical lanes
+     */
+    public void setVSouthLanes(short vSouthLanes) {
+        this.vSouthLanes = vSouthLanes;
     }
 
     /**
@@ -174,6 +210,50 @@ public class Settings {
      */
     public void setSimulationRunning(Boolean simulationRunning) {
         this.simulationRunning = simulationRunning;
+    }
+
+    /**
+     * @return the trafficFlow
+     */
+    public Boolean getTrafficFlow() {
+        return trafficFlow;
+    }
+
+    /**
+     * @param trafficFlow the trafficFlow to set
+     */
+    public void setTrafficFlow(Boolean trafficFlow) {
+        this.trafficFlow = trafficFlow;
+    }
+
+    /**
+     * @return the breakdownProbability
+     */
+    public double getBreakdownProbability() {
+        return breakdownProbability;
+    }
+
+    /**
+     * @param breakdownProbability the breakdownProbability to set
+     */
+    public void setBreakdownProbability(double breakdownProbability) {
+        if(breakdownProbability < 100.00) {
+            this.breakdownProbability = breakdownProbability;
+        }
+    }
+
+    /**
+     * @return the breakdownTime
+     */
+    public int getBreakdownTime() {
+        return breakdownTime;
+    }
+
+    /**
+     * @param breakdownTime the breakdownTime to set
+     */
+    public void setBreakdownTime(int breakdownTime) {
+        this.breakdownTime = breakdownTime;
     }
 
 }

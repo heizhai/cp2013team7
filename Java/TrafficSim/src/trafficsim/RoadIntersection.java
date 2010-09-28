@@ -13,11 +13,11 @@ public class RoadIntersection {
 
     private Road road;
     private short lightState;
-    private int intersectionStopLine;
+    private int intersectionCenter;
 
-    RoadIntersection(int stopLine, short noLanes, int roadLength) {
-        this.road = new Road(noLanes, roadLength);
-        this.intersectionStopLine = stopLine;
+    RoadIntersection(int intersectionCenter, short noWestNorthLanes, short noEastSouthLanes, int roadLength) {
+        this.road = new Road(noEastSouthLanes, noWestNorthLanes, roadLength);
+        this.intersectionCenter = intersectionCenter;
         
     }
 
@@ -66,28 +66,33 @@ public class RoadIntersection {
     /**
      * Returns the location of the Intersection's stop line on the road.
      *
-     * @return the intersectionStopLine
+     * @return the intersectionCenter
      */
-    public int getIntersectionStopLine() {
-        return intersectionStopLine;
+    public int getIntersectionCenter() {
+        return intersectionCenter;
     }
 
     /**
      * Sets the location of the Intersection's stop line on the road.
      *
-     * @param intersectionStopLine the intersectionStopLine to set
+     * @param intersectionCenter the intersectionCenter to set
      */
-    public void setIntersectionStopLine(int intersectionStopLine) {
-        this.intersectionStopLine = intersectionStopLine;
+    public void setIntersectionCenter(int intersectionCenter) {
+        this.intersectionCenter = intersectionCenter;
     }
 
     /**
      * Sets the location of the Intersection's stop line on the road.
      *
-     * @param intersectionStopLine the intersectionStopLine to set
+     * @param intersectionCenter the intersectionCenter to set
      */
     public void carStoppedReset() {
-        for(Lane l: this.road.getLanes()) {
+        for(Lane l: this.road.getLanes(Settings.TRAFFIC_EAST_SOUTH)) {
+            for(Car c: l.getCars()) {
+                c.setStopped(false);
+            }
+        }
+        for(Lane l: this.road.getLanes(Settings.TRAFFIC_WEST_NORTH)) {
             for(Car c: l.getCars()) {
                 c.setStopped(false);
             }

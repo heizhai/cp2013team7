@@ -24,21 +24,28 @@ public class SimulationGUI extends JPanel {
         
         //Draw the Horizontal Road
         //Calculate the Road Values
-        int hRoadWidth = Settings.getSimSettings().getHLanes()*Settings.LANE_WIDTH;
-        int vRoadWidth = Settings.getSimSettings().getVLanes()*Settings.LANE_WIDTH;
+        int hRoadWidth = (Settings.getSimSettings().getHEastLanes()*Settings.LANE_WIDTH)+(Settings.getSimSettings().getHWestLanes()*Settings.LANE_WIDTH);
+        int vRoadWidth = (Settings.getSimSettings().getVNorthLanes()*Settings.LANE_WIDTH)+(Settings.getSimSettings().getVSouthLanes()*Settings.LANE_WIDTH);
 
-        int hRoadY = (this.getHeight()/2)-(hRoadWidth/2);
-        int hRoadX = (this.getWidth()-Settings.getSimSettings().gethLaneLength())/2;
+        int hRoadY, hRoadX;
+
+        hRoadX = (this.getWidth()-Settings.getSimSettings().gethLaneLength())/2;
+
+        if(Settings.getSimSettings().getTrafficFlow() == Settings.TRAFFIC_FLOW_LEFT_HAND_TRAFFIC) {
+            hRoadY = (this.getHeight()/2)-(Settings.getSimSettings().getHWestLanes());
+        } else {
+            hRoadY = (this.getHeight()/2)-(Settings.getSimSettings().getHEastLanes());
+        }
 
         int vRoadY, vRoadX;
 
         int xOffset = (this.getWidth()-Settings.getSimSettings().gethLaneLength())/2;
         int yOffset = (this.getHeight()-Settings.getSimSettings().getvLaneLength())/2;
 
-        if(model.gethRoadIntersection().getRoad().getTrafficDirection() == Settings.TRAFFIC_EAST_SOUTH) {
-            vRoadX = xOffset+model.gethRoadIntersection().getIntersectionStopLine();
+        if(Settings.getSimSettings().getTrafficFlow() == Settings.TRAFFIC_FLOW_LEFT_HAND_TRAFFIC) {
+            vRoadX = xOffset+(model.gethRoadIntersection().getIntersectionCenter()-model.gethRoadIntersection().getRoad().getNoLanes(Settings.TRAFFIC_WEST_NORTH));
         } else {
-            vRoadX = xOffset+(model.gethRoadIntersection().getIntersectionStopLine()-vRoadWidth);
+            vRoadX = xOffset+(model.gethRoadIntersection().getIntersectionCenter()-model.gethRoadIntersection().getRoad().getNoLanes(Settings.TRAFFIC_WEST_NORTH));
         }
 
         if(model.getvRoadIntersection().getRoad().getTrafficDirection() == Settings.TRAFFIC_EAST_SOUTH) {
