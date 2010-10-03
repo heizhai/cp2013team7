@@ -122,11 +122,11 @@ class simulationFrame extends TimerTask {
                 int randHWest = randGen.nextInt(roadH.getNoLanes(Settings.TRAFFIC_WEST_NORTH));
                 int randHEast = randGen.nextInt(roadH.getNoLanes(Settings.TRAFFIC_EAST_SOUTH));
                 if(Settings.getSimSettings().getTrafficFlow() == Settings.TRAFFIC_FLOW_LEFT_HAND_TRAFFIC) {
-                    lanePositionHWest = 0;
-                    lanePositionHEast = roadH.getRoadLength();
-                } else {
                     lanePositionHWest = roadH.getRoadLength();
                     lanePositionHEast = 0;
+                } else {
+                    lanePositionHWest = 0;
+                    lanePositionHEast = roadH.getRoadLength();
                 }
 
                 modelIntersection.gethRoadIntersection().getRoad().getLane(Settings.TRAFFIC_WEST_NORTH, randHWest).addCar(new Car(lanePositionHWest));
@@ -141,11 +141,11 @@ class simulationFrame extends TimerTask {
                 int randVNorth = randGen.nextInt(roadV.getNoLanes(Settings.TRAFFIC_WEST_NORTH));
                 int randVSouth = randGen.nextInt(roadV.getNoLanes(Settings.TRAFFIC_EAST_SOUTH));
                 if(Settings.getSimSettings().getTrafficFlow() == Settings.TRAFFIC_FLOW_LEFT_HAND_TRAFFIC) {
-                    lanePositionVNorth = 0;
-                    lanePositionVSouth = roadV.getRoadLength();
-                } else {
                     lanePositionVNorth = roadV.getRoadLength();
                     lanePositionVSouth = 0;
+                } else {
+                    lanePositionVNorth = 0;
+                    lanePositionVSouth = roadV.getRoadLength();
                 }
 
                 modelIntersection.getvRoadIntersection().getRoad().getLane(Settings.TRAFFIC_WEST_NORTH, randVNorth).addCar(new Car(lanePositionVNorth));

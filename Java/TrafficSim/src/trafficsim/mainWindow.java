@@ -262,7 +262,7 @@ public class mainWindow extends javax.swing.JFrame {
         if((value < Settings.H_LANE_BOUNDS[0]) || (value > Settings.H_LANE_BOUNDS[1])) {
             JOptionPane.showMessageDialog(null, "Enter a value between "+Settings.H_LANE_BOUNDS[0]+" and "+Settings.H_LANE_BOUNDS[1]);
         } else {
-            Settings.getSimSettings().setHLanes(value);
+            //Settings.getSimSettings().setHLanes(value);
             window.repaint();
         }
     }
@@ -288,7 +288,7 @@ public class mainWindow extends javax.swing.JFrame {
         if((value < Settings.V_LANE_BOUNDS[0]) || (value > Settings.V_LANE_BOUNDS[1])) {
             JOptionPane.showMessageDialog(null, "Enter a value between "+Settings.V_LANE_BOUNDS[0]+" and "+Settings.V_LANE_BOUNDS[1]);
         } else {
-            Settings.getSimSettings().setVLanes(value);
+            //Settings.getSimSettings().setVLanes(value);
             window.repaint();
         }
     }
