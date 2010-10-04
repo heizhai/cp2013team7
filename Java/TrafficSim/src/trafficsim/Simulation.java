@@ -180,9 +180,9 @@ class simulationFrame extends TimerTask {
         int stopLine;
 
         if(trafficDirection == Settings.TRAFFIC_EAST_SOUTH) {
-            trafficCycleDistance = Settings.CAR_MOVE;
+            trafficCycleDistance = roadIntersection.getRoad().getRoadSpeed();
         } else {
-            trafficCycleDistance = (-1*Settings.CAR_MOVE);
+            trafficCycleDistance = (-1*roadIntersection.getRoad().getRoadSpeed());
         }
         
 

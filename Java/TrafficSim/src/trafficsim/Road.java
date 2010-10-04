@@ -11,6 +11,7 @@ class Road {
     private CopyOnWriteArrayList<Lane> eastSouthLanes = new CopyOnWriteArrayList<Lane>();
     private CopyOnWriteArrayList<Lane> westNorthLanes = new CopyOnWriteArrayList<Lane>();
     private int roadLength;
+    private int roadSpeed;
 
     /**
      * Constructor for Road
@@ -109,6 +110,20 @@ class Road {
      */
     public Lane getLane(Boolean trafficDirection, int laneNo) {
         return getLanes(trafficDirection).get(laneNo);
+    }
+
+    /**
+     * @return the roadSpeed
+     */
+    public int getRoadSpeed() {
+        return roadSpeed;
+    }
+
+    /**
+     * @param roadSpeed the roadSpeed to set
+     */
+    public void setRoadSpeed(int roadSpeed) {
+        this.roadSpeed = roadSpeed;
     }
 
 }

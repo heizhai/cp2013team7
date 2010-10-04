@@ -16,8 +16,8 @@ public class Settings {
     private short vSouthLanes = 4;
     private int vLaneLength = 500;
     private int hLaneLength = 500;
-    private int vLaneStopLine = 250;
-    private int hLaneStopLine = 250;
+    private int vIntersectionCenter = 250;
+    private int hIntersectionCenter = 250;
     private double hCarProbability = 1;
     private double vCarProbability = 1;
     private double breakdownProbability = 0.05;
@@ -37,7 +37,7 @@ public class Settings {
     public static final Boolean TRAFFIC_FLOW_RIGHT_HAND_TRAFFIC = true;
     public static final Boolean ROAD_SOUTH_NORTH = true;
     public static final Boolean ROAD_EAST_WEST = false;
-    public static final int FRAME_LENGTH =  100;
+    public static final int FRAME_LENGTH =  41; //Running at 24 frames per second.
     public static final int[] V_LANE_BOUNDS = {1,4};
     public static final int[] H_LANE_BOUNDS = {1,3};
     public static final double[] H_CAR_PROBABILITY_BOUNDS = {0.0, 1.0};
@@ -171,34 +171,6 @@ public class Settings {
     }
 
     /**
-     * @return the vLaneStopLine
-     */
-    public int getvLaneStopLine() {
-        return vLaneStopLine;
-    }
-
-    /**
-     * @param vLaneStopLine the vLaneStopLine to set
-     */
-    public void setvLaneStopLine(int vLaneStopLine) {
-        this.vLaneStopLine = vLaneStopLine;
-    }
-
-    /**
-     * @return the hLaneStopLine
-     */
-    public int gethLaneStopLine() {
-        return hLaneStopLine;
-    }
-
-    /**
-     * @param hLaneStopLine the hLaneStopLine to set
-     */
-    public void sethLaneStopLine(int hLaneStopLine) {
-        this.hLaneStopLine = hLaneStopLine;
-    }
-
-    /**
      * @return the simulationRunning
      */
     public Boolean getSimulationRunning() {
@@ -254,6 +226,34 @@ public class Settings {
      */
     public void setBreakdownTime(int breakdownTime) {
         this.breakdownTime = breakdownTime;
+    }
+
+    /**
+     * @return the vIntersectionCenter
+     */
+    public int getvIntersectionCenter() {
+        return vIntersectionCenter;
+    }
+
+    /**
+     * @param vIntersectionCenter the vIntersectionCenter to set
+     */
+    public void setvIntersectionCenter(int vIntersectionCenter) {
+        this.vIntersectionCenter = vIntersectionCenter;
+    }
+
+    /**
+     * @return the hIntersectionCenter
+     */
+    public int gethIntersectionCenter() {
+        return hIntersectionCenter;
+    }
+
+    /**
+     * @param hIntersectionCenter the hIntersectionCenter to set
+     */
+    public void sethIntersectionCenter(int hIntersectionCenter) {
+        this.hIntersectionCenter = hIntersectionCenter;
     }
 
 }
