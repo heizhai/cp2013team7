@@ -18,7 +18,7 @@ class Road {
      *
      * @return the lanes
      */
-    public  Road(short noEastSouthLanes, short noWestNorthLanes, int roadLength) {
+    public  Road(short noEastSouthLanes, short noWestNorthLanes, int roadLength, int roadSpeed) {
         for(int i = 0; i < noEastSouthLanes; i++) {
             this.addLane(new Lane(), Settings.TRAFFIC_EAST_SOUTH);
         }
@@ -26,6 +26,7 @@ class Road {
             this.addLane(new Lane(), Settings.TRAFFIC_WEST_NORTH);
         }
         this.roadLength = roadLength;
+        this.roadSpeed = roadSpeed;
     }
 
     /**

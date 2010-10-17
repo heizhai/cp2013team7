@@ -41,6 +41,9 @@ public class mainWindow extends javax.swing.JFrame {
     private JMenuItem setHProbMenuItem;
     private JMenuItem setVProbMenuItem;
 
+    private JCheckBoxMenuItem setLHD;
+    private JCheckBoxMenuItem setRHD;
+
     //Drawing Area
     private SimulationGUI simGUI;
 
@@ -60,8 +63,6 @@ public class mainWindow extends javax.swing.JFrame {
         settingsMenu = new JMenu();
 
         //File Menu Initialisation
-        runMenuItem = new JMenuItem();
-        runMultiMenuItem = new JMenuItem();
         simRunMenuItem = new JCheckBoxMenuItem();
         exitMenuItem = new JMenuItem();
        
@@ -70,6 +71,8 @@ public class mainWindow extends javax.swing.JFrame {
         setVLanesMenuItem = new JMenuItem();
         setHProbMenuItem = new JMenuItem();
         setVProbMenuItem = new JMenuItem();
+        setLHD = new JCheckBoxMenuItem();
+        setRHD = new JCheckBoxMenuItem();
 
         //Set Window Settings
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -79,8 +82,6 @@ public class mainWindow extends javax.swing.JFrame {
         settingsMenu.setText("Settings");
 
         //Set File Menu Text
-        runMenuItem.setText("Run One Cycle");
-        runMultiMenuItem.setText("Run Many Cycles");
         simRunMenuItem.setText("Run Simulation");
         exitMenuItem.setText("Exit");
 
@@ -89,16 +90,20 @@ public class mainWindow extends javax.swing.JFrame {
         setVLanesMenuItem.setText("No. Vertical Lanes");
         setHProbMenuItem.setText("Horizontal Car Regularity");
         setVProbMenuItem.setText("Vertical Car Regularity");
+        setLHD.setText("Left Hand Drive");
+        setRHD.setText("Right Hand Drive");
+
 
         //Construct File Menu
-        fileMenu.add(runMenuItem);
-        fileMenu.add(runMultiMenuItem);
         fileMenu.add(new JSeparator());
         fileMenu.add(simRunMenuItem);
         fileMenu.add(new JSeparator());
         fileMenu.add(exitMenuItem);
 
         //Construct Settings Menu
+        settingsMenu.add(setLHD);
+        settingsMenu.add(setRHD);
+        settingsMenu.add(new JSeparator());
         settingsMenu.add(setHLanesMenuItem);
         settingsMenu.add(setVLanesMenuItem);
         settingsMenu.add(new JSeparator());
@@ -117,11 +122,9 @@ public class mainWindow extends javax.swing.JFrame {
         controlPanel = new JPanel();
         runSimulationButton = new JButton("Run");
         stopSimulationButton = new JButton("Stop");
-        lightsCycleButton = new JButton("Cycle Lights");
 
         controlPanel.add(BorderLayout.CENTER, runSimulationButton);
         controlPanel.add(BorderLayout.CENTER, stopSimulationButton);
-        controlPanel.add(BorderLayout.EAST, lightsCycleButton);
         stopSimulationButton.setVisible(false);
         add(controlPanel, BorderLayout.SOUTH);
 
@@ -129,15 +132,10 @@ public class mainWindow extends javax.swing.JFrame {
         stopSimulationButton.addActionListener(new simulationToggle(this, simulation));
         runSimulationButton.addActionListener(new simulationToggle(this, simulation));
         simRunMenuItem.addActionListener(new simulationToggle(this, simulation));
-        lightsCycleButton.addActionListener(new lightsCycleListener(this, simulation));
-        runMenuItem.addActionListener(new lightsCycleListener(this, simulation));
-        runMultiMenuItem.addActionListener(new multiLightsCycleListener(this, simulation));
         setHLanesMenuItem.addActionListener(new settingsHLanesListener(this));
         setVLanesMenuItem.addActionListener(new settingsVLanesListener(this));
         setHProbMenuItem.addActionListener(new settingsHProbListener());
         setVProbMenuItem.addActionListener(new settingsVProbListener());
-
-        lightCycle(false);
 
         //Pack the window
         pack();
@@ -148,12 +146,6 @@ public class mainWindow extends javax.swing.JFrame {
         runSimulationButton.setVisible(!condition);
         stopSimulationButton.setVisible(condition);
         settingsMenu.setEnabled(!condition);
-    }
-
-    public void lightCycle(Boolean setState) {
-        lightsCycleButton.setEnabled(setState);
-        runMenuItem.setEnabled(setState);
-        runMultiMenuItem.setEnabled(setState);
     }
 
 }
@@ -184,62 +176,13 @@ public class mainWindow extends javax.swing.JFrame {
         } else {
             try {
                 simulation.run();
+                simulation.multiLightCycle();
             } catch (InterruptedException ex) {
                 Logger.getLogger(simulationToggle.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
 
- }
-
-
- /**
- * ActionListener implementing class which handles button presses on the buttons to make the traffic lights change
- *
- * @author Tristan Davey
- */
- class lightsCycleListener implements ActionListener {
-
-     mainWindow window;
-     SimulationEnvironment simulation;
-
-    public lightsCycleListener(mainWindow window, SimulationEnvironment simulation) {
-        this.window = window;
-        this.simulation = simulation;
-    }
-
-    public void actionPerformed(ActionEvent e) {
-        simulation.lightCycle(false);
-        window.lightCycle(false);
-    }
-
-}
-
- /**
- * ActionListener implementing class which handles button presses on the buttons to make the traffic lights change
- *
- * @author Tristan Davey
- */
- class multiLightsCycleListener implements ActionListener {
-
-     mainWindow window;
-     SimulationEnvironment simulation;
-
-    public multiLightsCycleListener(mainWindow window, SimulationEnvironment simulation) {
-        this.window = window;
-        this.simulation = simulation;
-    }
-
-    public void actionPerformed(ActionEvent e) {
-        String label = "Number of Cycles ("+Settings.LIGHT_CYCLE_BOUNDS[0]+"-"+Settings.LIGHT_CYCLE_BOUNDS[1]+"):";
-        int value = Short.parseShort(JOptionPane.showInputDialog(null, label));
-        if((value < Settings.LIGHT_CYCLE_BOUNDS[0]) || (value > Settings.LIGHT_CYCLE_BOUNDS[1])) {
-            JOptionPane.showMessageDialog(null, "Enter a value between "+Settings.H_LANE_BOUNDS[0]+" and "+Settings.H_LANE_BOUNDS[1]);
-        } else {
-            simulation.multiLightCycle(value);
-            window.lightCycle(false);
-        }
-    }
 
 }
 

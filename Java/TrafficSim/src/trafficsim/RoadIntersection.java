@@ -10,15 +10,18 @@ public class RoadIntersection {
     static final short RED_LIGHT = 0;
     static final short YELLOW_LIGHT = 1;
     static final short GREEN_LIGHT = 2;
+    static final short TURNING_YELLOW_LIGHT = 3;
+    static final short TURNING_GREEN_LIGHT = 4;
 
     private Road road;
     private short lightState;
+    private Boolean roadOrientation;
     private int intersectionCenter;
 
-    RoadIntersection(int intersectionCenter, short noWestNorthLanes, short noEastSouthLanes, int roadLength) {
-        this.road = new Road(noEastSouthLanes, noWestNorthLanes, roadLength);
+    RoadIntersection(int intersectionCenter, short noWestNorthLanes, short noEastSouthLanes, int roadLength, int roadSpeed, Boolean roadOrientation) {
+        this.road = new Road(noEastSouthLanes, noWestNorthLanes, roadLength, roadSpeed);
         this.intersectionCenter = intersectionCenter;
-        
+        this.roadOrientation = roadOrientation;
     }
 
     /**
@@ -54,7 +57,7 @@ public class RoadIntersection {
      * @param lightState the lightState to set
      */
     public void setLightState(short lightState) {
-        if(lightState < 0 || lightState > 2) {
+        if(lightState < 0 || lightState > 4) {
             lightState = 0;
         }
         this.lightState = lightState;
@@ -97,6 +100,20 @@ public class RoadIntersection {
                 c.setStopped(false);
             }
         }
+    }
+
+    /**
+     * @return the roadOrientation
+     */
+    public Boolean getRoadOrientation() {
+        return roadOrientation;
+    }
+
+    /**
+     * @param roadOrientation the roadOrientation to set
+     */
+    public void setRoadOrientation(Boolean roadOrientation) {
+        this.roadOrientation = roadOrientation;
     }
 
 }

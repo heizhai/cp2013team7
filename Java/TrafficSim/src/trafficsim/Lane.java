@@ -75,4 +75,13 @@ public class Lane {
         return true;
     }
 
+        public Boolean isLaneClear(int lanePosition, int offset) {
+        for (Car c: cars) {
+            if(c.intersects(new Car(lanePosition), offset)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 }

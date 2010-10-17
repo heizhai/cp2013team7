@@ -53,6 +53,8 @@ public class SimulationGUI extends JPanel {
         g.fillRect( hRoadX, hRoadY, Settings.getSimSettings().gethLaneLength(), hRoadWidth);
         g.fillRect( vRoadX, vRoadY, vRoadWidth, Settings.getSimSettings().getvLaneLength());
 
+        System.out.println("vRoadX input:"+vRoadX);
+
         //Render Horizontal Road Cars
         renderCars(model.gethRoadIntersection().getRoad(), g, hRoadX, hRoadY, Settings.ROAD_EAST_WEST, Settings.getSimSettings().getTrafficFlow());
         //Render Vertical Road Cars
@@ -61,12 +63,20 @@ public class SimulationGUI extends JPanel {
         //Render Traffic Lights
         g.setColor(Color.BLACK);
         int lightPadding = 20;
-        int lightWidth = 25;
-        int lightHeight = 50;
-        int lightCorner = 5;
+        int lightWidth = 50;
+        int lightHeight = 60;
+        int lightCorner = 8;
         int lightDiameter = 10;
 
-        //Traffic Light rendering is highly inefficient in this code. If anybody wants to rework it, please do!
+        // Traffic Light Rendering
+
+        // This is about as efficient as an old man drawing the traffic lights
+        // Please please please, somebody refactor this code!
+        // If you cannot stand the sight of inefficient code or rediculous logic
+        // used to position the lights, a codefold is included for your convenience.
+        // Signed Tristan
+
+        // <editor-fold desc="Traffic Light Rendering">
 
         if(model.gethRoadIntersection().getRoad().getLanes(Settings.TRAFFIC_EAST_SOUTH).size() > 0) {
             double[] hLightOrderEast = {0.25, 0.5, 0.75};
@@ -81,23 +91,73 @@ public class SimulationGUI extends JPanel {
             } else {
                 g.setColor(Color.GRAY);
             }
-            g.fillOval((int) (hLightXEast+(hLightOrderEast[0]*lightHeight-.5*lightDiameter)), (int) (hLightYEast+(.5*lightWidth-.5*lightDiameter)) , lightDiameter, lightDiameter);
+            if(Settings.getSimSettings().getTrafficFlow() == Settings.TRAFFIC_FLOW_LEFT_HAND_TRAFFIC) {
+                g.fillOval((int) (hLightXEast+(hLightOrderEast[0]*lightHeight-.5*lightDiameter)), (int) (hLightYEast+(.3*lightWidth-.5*lightDiameter)) , lightDiameter, lightDiameter);
+            } else {
+                g.fillOval((int) (hLightXEast+(hLightOrderEast[0]*lightHeight-.5*lightDiameter)), (int) (hLightYEast+(.7*lightWidth-.5*lightDiameter)-lightPadding) , lightDiameter, lightDiameter);
+            }
 
+            //Green Horizontal Turning Light
+            if(model.gethRoadIntersection().getLightState() == model.gethRoadIntersection().TURNING_GREEN_LIGHT) {
+                g.setColor(Color.GREEN);
+            } else {
+                g.setColor(Color.GRAY);
+            }
+            if(Settings.getSimSettings().getTrafficFlow() == Settings.TRAFFIC_FLOW_LEFT_HAND_TRAFFIC) {
+                g.drawString("↓", (int) (hLightXEast+(hLightOrderEast[0]*lightHeight-.5*lightDiameter)), (int) (hLightYEast+(.8*lightWidth)));
+            } else {
+                g.drawString("↑", (int) (hLightXEast+(hLightOrderEast[0]*lightHeight-.5*lightDiameter)), (int) (hLightYEast+(.25*lightWidth-.5*lightDiameter)));
+            }
+            
             // Yellow Horizontal Light
             if(model.gethRoadIntersection().getLightState() == model.gethRoadIntersection().YELLOW_LIGHT) {
                 g.setColor(Color.ORANGE);
             } else {
                 g.setColor(Color.GRAY);
             }
-            g.fillOval((int) (hLightXEast+(hLightOrderEast[1]*lightHeight-.5*lightDiameter)), (int) (hLightYEast+(.5*lightWidth-.5*lightDiameter)) , lightDiameter, lightDiameter);
+            if(Settings.getSimSettings().getTrafficFlow() == Settings.TRAFFIC_FLOW_LEFT_HAND_TRAFFIC) {
+                g.fillOval((int) (hLightXEast+(hLightOrderEast[1]*lightHeight-.5*lightDiameter)), (int) (hLightYEast+(.3*lightWidth-.5*lightDiameter)) , lightDiameter, lightDiameter);
+            } else {
+                g.fillOval((int) (hLightXEast+(hLightOrderEast[1]*lightHeight-.5*lightDiameter)), (int) (hLightYEast+(.7*lightWidth-.5*lightDiameter)) , lightDiameter, lightDiameter);
+            }
+
+            // Yellow Horizontal Turning Light
+            if(model.gethRoadIntersection().getLightState() == model.gethRoadIntersection().TURNING_YELLOW_LIGHT) {
+                g.setColor(Color.ORANGE);
+            } else {
+                g.setColor(Color.GRAY);
+            }
+            if(Settings.getSimSettings().getTrafficFlow() == Settings.TRAFFIC_FLOW_LEFT_HAND_TRAFFIC) {
+                g.drawString("↓", (int) (hLightXEast+(hLightOrderEast[1]*lightHeight-.5*lightDiameter)), (int) (hLightYEast+(.8*lightWidth)));
+            } else {
+                g.drawString("↑", (int) (hLightXEast+(hLightOrderEast[1]*lightHeight-.5*lightDiameter)), (int) (hLightYEast+(.25*lightWidth-.5*lightDiameter)));
+            }
+
 
             // Red Horizontal Light
-            if(model.gethRoadIntersection().getLightState() == model.gethRoadIntersection().RED_LIGHT) {
+            if(model.gethRoadIntersection().getLightState() == model.gethRoadIntersection().RED_LIGHT  || model.gethRoadIntersection().getLightState() == model.gethRoadIntersection().TURNING_GREEN_LIGHT || model.gethRoadIntersection().getLightState() == model.gethRoadIntersection().TURNING_YELLOW_LIGHT) {
                 g.setColor(Color.RED);
             } else {
                 g.setColor(Color.GRAY);
             }
-            g.fillOval((int) (hLightXEast+(hLightOrderEast[2]*lightHeight-.5*lightDiameter)), (int) (hLightYEast+(.5*lightWidth-.5*lightDiameter)) , lightDiameter, lightDiameter);
+            if(Settings.getSimSettings().getTrafficFlow() == Settings.TRAFFIC_FLOW_LEFT_HAND_TRAFFIC) {
+                g.fillOval((int) (hLightXEast+(hLightOrderEast[2]*lightHeight-.5*lightDiameter)), (int) (hLightYEast+(.3*lightWidth-.5*lightDiameter)) , lightDiameter, lightDiameter);
+            } else {
+                g.fillOval((int) (hLightXEast+(hLightOrderEast[2]*lightHeight-.5*lightDiameter)), (int) (hLightYEast+(.7*lightWidth-.5*lightDiameter)) , lightDiameter, lightDiameter);
+            }
+            
+            // Red Horizontal Turning Light
+            if(model.gethRoadIntersection().getLightState() != model.gethRoadIntersection().TURNING_GREEN_LIGHT && model.gethRoadIntersection().getLightState() != model.gethRoadIntersection().TURNING_YELLOW_LIGHT) {
+                g.setColor(Color.RED);
+            } else {
+                g.setColor(Color.GRAY);
+            }
+            if(Settings.getSimSettings().getTrafficFlow() == Settings.TRAFFIC_FLOW_LEFT_HAND_TRAFFIC) {
+                g.drawString("↓", (int) (hLightXEast+(hLightOrderEast[2]*lightHeight-.5*lightDiameter)), (int) (hLightYEast+(.8*lightWidth)));
+            } else {
+                g.drawString("↑", (int) (hLightXEast+(hLightOrderEast[2]*lightHeight-.5*lightDiameter)), (int) (hLightYEast+(.25*lightWidth-.5*lightDiameter)));
+            }
+
         }
             
         if(model.gethRoadIntersection().getRoad().getLanes(Settings.TRAFFIC_WEST_NORTH).size() > 0) {
@@ -113,7 +173,23 @@ public class SimulationGUI extends JPanel {
             } else {
                 g.setColor(Color.GRAY);
             }
-            g.fillOval((int) (hLightXWest+(hLightOrderWest[0]*lightHeight-.5*lightDiameter)), (int) (hLightYWest+(.5*lightWidth-.5*lightDiameter)) , lightDiameter, lightDiameter);
+            if(Settings.getSimSettings().getTrafficFlow() == Settings.TRAFFIC_FLOW_LEFT_HAND_TRAFFIC) {
+                g.fillOval((int) (hLightXWest+(hLightOrderWest[0]*lightHeight-.5*lightDiameter)), (int) (hLightYWest+(.7*lightWidth-.5*lightDiameter)) , lightDiameter, lightDiameter);
+            } else {
+                g.fillOval((int) (hLightXWest+(hLightOrderWest[0]*lightHeight-.5*lightDiameter)), (int) (hLightYWest+(.3*lightWidth-.5*lightDiameter)) , lightDiameter, lightDiameter);
+            }
+
+            //Green Horizontal Turning Light
+            if(model.gethRoadIntersection().getLightState() == model.gethRoadIntersection().TURNING_GREEN_LIGHT) {
+                g.setColor(Color.GREEN);
+            } else {
+                g.setColor(Color.GRAY);
+            }
+            if(Settings.getSimSettings().getTrafficFlow() == Settings.TRAFFIC_FLOW_LEFT_HAND_TRAFFIC) {
+                g.drawString("↑", (int) (hLightXWest+(hLightOrderWest[0]*lightHeight-.5*lightDiameter)), (int) (hLightYWest+(.5*lightWidth-.5*lightDiameter)));
+            } else {
+                g.drawString("↓", (int) (hLightXWest+(hLightOrderWest[0]*lightHeight-.5*lightDiameter)), (int) (hLightYWest+(.5*lightWidth-.5*lightDiameter)));
+            }
 
             // Yellow Horizontal Light
             if(model.gethRoadIntersection().getLightState() == model.gethRoadIntersection().YELLOW_LIGHT) {
@@ -121,15 +197,47 @@ public class SimulationGUI extends JPanel {
             } else {
                 g.setColor(Color.GRAY);
             }
-            g.fillOval((int) (hLightXWest+(hLightOrderWest[1]*lightHeight-.5*lightDiameter)), (int) (hLightYWest+(.5*lightWidth-.5*lightDiameter)) , lightDiameter, lightDiameter);
+            if(Settings.getSimSettings().getTrafficFlow() == Settings.TRAFFIC_FLOW_LEFT_HAND_TRAFFIC) {
+                g.fillOval((int) (hLightXWest+(hLightOrderWest[1]*lightHeight-.5*lightDiameter)), (int) (hLightYWest+(.7*lightWidth-.5*lightDiameter)) , lightDiameter, lightDiameter);
+            } else {
+                g.fillOval((int) (hLightXWest+(hLightOrderWest[1]*lightHeight-.5*lightDiameter)), (int) (hLightYWest+(.3*lightWidth-.5*lightDiameter)) , lightDiameter, lightDiameter);
+            }
+
+            if(model.gethRoadIntersection().getLightState() == model.gethRoadIntersection().TURNING_YELLOW_LIGHT) {
+                g.setColor(Color.GREEN);
+            } else {
+                g.setColor(Color.GRAY);
+            }
+            if(Settings.getSimSettings().getTrafficFlow() == Settings.TRAFFIC_FLOW_LEFT_HAND_TRAFFIC) {
+                g.drawString("↑", (int) (hLightXWest+(hLightOrderWest[1]*lightHeight-.5*lightDiameter)), (int) (hLightYWest+(.5*lightWidth-.5*lightDiameter)));
+            } else {
+                g.drawString("↓", (int) (hLightXWest+(hLightOrderWest[1]*lightHeight-.5*lightDiameter)), (int) (hLightYWest+(.5*lightWidth-.5*lightDiameter)));
+            }
 
             // Red Horizontal Light
-            if(model.gethRoadIntersection().getLightState() == model.gethRoadIntersection().RED_LIGHT) {
+            if(model.gethRoadIntersection().getLightState() == model.gethRoadIntersection().RED_LIGHT || model.gethRoadIntersection().getLightState() == model.gethRoadIntersection().TURNING_GREEN_LIGHT || model.gethRoadIntersection().getLightState() == model.gethRoadIntersection().TURNING_YELLOW_LIGHT) {
                 g.setColor(Color.RED);
             } else {
                 g.setColor(Color.GRAY);
             }
-            g.fillOval((int) (hLightXWest+(hLightOrderWest[2]*lightHeight-.5*lightDiameter)), (int) (hLightYWest+(.5*lightWidth-.5*lightDiameter)) , lightDiameter, lightDiameter);
+            if(Settings.getSimSettings().getTrafficFlow() == Settings.TRAFFIC_FLOW_LEFT_HAND_TRAFFIC) {
+                g.fillOval((int) (hLightXWest+(hLightOrderWest[2]*lightHeight-.5*lightDiameter)), (int) (hLightYWest+(.7*lightWidth-.5*lightDiameter)) , lightDiameter, lightDiameter);
+            } else {
+                g.fillOval((int) (hLightXWest+(hLightOrderWest[2]*lightHeight-.5*lightDiameter)), (int) (hLightYWest+(.3*lightWidth-.5*lightDiameter)) , lightDiameter, lightDiameter);
+            }
+
+            // Red Horizontal Turning Light
+            if(model.gethRoadIntersection().getLightState() != model.gethRoadIntersection().TURNING_GREEN_LIGHT && model.gethRoadIntersection().getLightState() != model.gethRoadIntersection().TURNING_YELLOW_LIGHT) {
+                g.setColor(Color.RED);
+            } else {
+                g.setColor(Color.GRAY);
+            }
+            if(Settings.getSimSettings().getTrafficFlow() == Settings.TRAFFIC_FLOW_LEFT_HAND_TRAFFIC) {
+                g.drawString("↑", (int) (hLightXWest+(hLightOrderWest[2]*lightHeight-.5*lightDiameter)), (int) (hLightYWest+(.5*lightWidth-.5*lightDiameter)));
+            } else {
+                g.drawString("↓", (int) (hLightXWest+(hLightOrderWest[2]*lightHeight-.5*lightDiameter)), (int) (hLightYWest+(.5*lightWidth-.5*lightDiameter)));
+            }
+
         }
 
         if(model.getvRoadIntersection().getRoad().getLanes(Settings.TRAFFIC_EAST_SOUTH).size() > 0) {
@@ -145,24 +253,71 @@ public class SimulationGUI extends JPanel {
             } else {
                 g.setColor(Color.GRAY);
             }
-            g.fillOval((int) (vLightXSouth+(.5*lightWidth-.5*lightDiameter)), (int) (vLightYSouth+(vLightOrderSouth[0]*lightHeight-.5*lightDiameter)), lightDiameter, lightDiameter);
+            if(Settings.getSimSettings().getTrafficFlow() == Settings.TRAFFIC_FLOW_LEFT_HAND_TRAFFIC) {
+                g.fillOval((int) (vLightXSouth+(.7*lightWidth-.5*lightDiameter)), (int) (vLightYSouth+(vLightOrderSouth[0]*lightHeight-.5*lightDiameter)), lightDiameter, lightDiameter);
+            } else {
+                g.fillOval((int) (vLightXSouth+(.3*lightWidth-.5*lightDiameter)), (int) (vLightYSouth+(vLightOrderSouth[0]*lightHeight-.5*lightDiameter)), lightDiameter, lightDiameter);
+            }
+
+            //Green Vertical Turning Light
+            if(model.getvRoadIntersection().getLightState() == model.getvRoadIntersection().TURNING_GREEN_LIGHT) {
+                g.setColor(Color.GREEN);
+            } else {
+                g.setColor(Color.GRAY);
+            }
+            if(Settings.getSimSettings().getTrafficFlow() == Settings.TRAFFIC_FLOW_LEFT_HAND_TRAFFIC) {
+                g.drawString("←", (int) (vLightXSouth+(.3*lightWidth-.5*lightDiameter)), (int) (vLightYSouth+(vLightOrderSouth[0]*lightHeight+.4*lightDiameter)));
+            } else {
+                g.drawString("→", (int) (vLightXSouth+(.7*lightWidth-.5*lightDiameter)), (int) (vLightYSouth+(vLightOrderSouth[0]*lightHeight+.4*lightDiameter)));
+            }
 
             // Yellow Vertical Light
-            if(model.getvRoadIntersection().getLightState() == model.gethRoadIntersection().YELLOW_LIGHT) {
+            if(model.getvRoadIntersection().getLightState() == model.getvRoadIntersection().YELLOW_LIGHT) {
                 g.setColor(Color.ORANGE);
             } else {
                 g.setColor(Color.GRAY);
             }
-            g.fillOval((int) (vLightXSouth+(.5*lightWidth-.5*lightDiameter)), (int) (vLightYSouth+(vLightOrderSouth[1]*lightHeight-.5*lightDiameter)), lightDiameter, lightDiameter);
+            if(Settings.getSimSettings().getTrafficFlow() == Settings.TRAFFIC_FLOW_LEFT_HAND_TRAFFIC) {
+                g.fillOval((int) (vLightXSouth+(.7*lightWidth-.5*lightDiameter)), (int) (vLightYSouth+(vLightOrderSouth[1]*lightHeight-.5*lightDiameter)), lightDiameter, lightDiameter);
+            } else {
+                g.fillOval((int) (vLightXSouth+(.3*lightWidth-.5*lightDiameter)), (int) (vLightYSouth+(vLightOrderSouth[1]*lightHeight-.5*lightDiameter)), lightDiameter, lightDiameter);
+            }
+            
+            // Yellow Vertical Turning Light
+            if(model.getvRoadIntersection().getLightState() == model.getvRoadIntersection().TURNING_YELLOW_LIGHT) {
+                g.setColor(Color.ORANGE);
+            } else {
+                g.setColor(Color.GRAY);
+            }
+            if(Settings.getSimSettings().getTrafficFlow() == Settings.TRAFFIC_FLOW_LEFT_HAND_TRAFFIC) {
+                g.drawString("←", (int) (vLightXSouth+(.3*lightWidth-.5*lightDiameter)), (int) (vLightYSouth+(vLightOrderSouth[1]*lightHeight+.4*lightDiameter)));
+            } else {
+                g.drawString("→", (int) (vLightXSouth+(.7*lightWidth-.5*lightDiameter)), (int) (vLightYSouth+(vLightOrderSouth[1]*lightHeight+.4*lightDiameter)));
+            }
 
             // Red Vertical Light
-            if(model.getvRoadIntersection().getLightState() == model.gethRoadIntersection().RED_LIGHT) {
+            if(model.getvRoadIntersection().getLightState() == model.gethRoadIntersection().RED_LIGHT  || model.getvRoadIntersection().getLightState() == model.getvRoadIntersection().TURNING_GREEN_LIGHT || model.getvRoadIntersection().getLightState() == model.gethRoadIntersection().TURNING_YELLOW_LIGHT) {
                 g.setColor(Color.RED);
             } else {
                 g.setColor(Color.GRAY);
             }
-            g.fillOval((int) (vLightXSouth+(.5*lightWidth-.5*lightDiameter)), (int) (vLightYSouth+(vLightOrderSouth[2]*lightHeight-.5*lightDiameter)), lightDiameter, lightDiameter);
+            if(Settings.getSimSettings().getTrafficFlow() == Settings.TRAFFIC_FLOW_LEFT_HAND_TRAFFIC) {
+                g.fillOval((int) (vLightXSouth+(.7*lightWidth-.5*lightDiameter)), (int) (vLightYSouth+(vLightOrderSouth[2]*lightHeight-.5*lightDiameter)), lightDiameter, lightDiameter);
+            } else {
+                g.fillOval((int) (vLightXSouth+(.3*lightWidth-.5*lightDiameter)), (int) (vLightYSouth+(vLightOrderSouth[2]*lightHeight-.5*lightDiameter)), lightDiameter, lightDiameter);
+            }
 
+            //Red Vertical Turning Light
+            if(model.getvRoadIntersection().getLightState() != model.getvRoadIntersection().TURNING_GREEN_LIGHT && model.getvRoadIntersection().getLightState() != model.gethRoadIntersection().TURNING_YELLOW_LIGHT) {
+                g.setColor(Color.RED);
+            } else {
+                g.setColor(Color.GRAY);
+            }
+            if(Settings.getSimSettings().getTrafficFlow() ==  Settings.TRAFFIC_FLOW_LEFT_HAND_TRAFFIC) {
+                g.drawString("←", (int) (vLightXSouth+(.3*lightWidth-.5*lightDiameter)), (int) (vLightYSouth+(vLightOrderSouth[2]*lightHeight+.4*lightDiameter)));
+            } else {
+                g.drawString("→", (int) (vLightXSouth+(.7*lightWidth-.5*lightDiameter)), (int) (vLightYSouth+(vLightOrderSouth[2]*lightHeight+.4*lightDiameter)));       
+            }
         }
 
         if(model.gethRoadIntersection().getRoad().getLanes(Settings.TRAFFIC_WEST_NORTH).size() > 0) {
@@ -178,7 +333,23 @@ public class SimulationGUI extends JPanel {
             } else {
                 g.setColor(Color.GRAY);
             }
-            g.fillOval((int) (vLightXNorth+(.5*lightWidth-.5*lightDiameter)), (int) (vLightYNorth+(vLightOrderNorth[0]*lightHeight-.5*lightDiameter)), lightDiameter, lightDiameter);
+            if(Settings.getSimSettings().getTrafficFlow() ==  Settings.TRAFFIC_FLOW_LEFT_HAND_TRAFFIC) {
+                g.fillOval((int) (vLightXNorth+(.3*lightWidth-.5*lightDiameter)), (int) (vLightYNorth+(vLightOrderNorth[0]*lightHeight-.5*lightDiameter)), lightDiameter, lightDiameter);
+            } else {
+                g.fillOval((int) (vLightXNorth+(.7*lightWidth-.5*lightDiameter)), (int) (vLightYNorth+(vLightOrderNorth[0]*lightHeight-.5*lightDiameter)), lightDiameter, lightDiameter);
+            }
+
+            //Green Vertical Turning Light
+            if(model.getvRoadIntersection().getLightState() == model.getvRoadIntersection().TURNING_GREEN_LIGHT) {
+                g.setColor(Color.GREEN);
+            } else {
+                g.setColor(Color.GRAY);
+            }
+            if(Settings.getSimSettings().getTrafficFlow() == Settings.TRAFFIC_FLOW_LEFT_HAND_TRAFFIC) {
+                g.drawString("→", (int) (vLightXNorth+(.7*lightWidth-.5*lightDiameter)), (int) (vLightYNorth+(vLightOrderNorth[0]*lightHeight+.5*lightDiameter)));
+            } else {
+                g.drawString("←", (int) (vLightXNorth+(.3*lightWidth-.5*lightDiameter)), (int) (vLightYNorth+(vLightOrderNorth[0]*lightHeight+.5*lightDiameter)));
+            }
 
             // Yellow Vertical Light
             if(model.getvRoadIntersection().getLightState() == model.gethRoadIntersection().YELLOW_LIGHT) {
@@ -186,18 +357,51 @@ public class SimulationGUI extends JPanel {
             } else {
                 g.setColor(Color.GRAY);
             }
-            g.fillOval((int) (vLightXNorth+(.5*lightWidth-.5*lightDiameter)), (int) (vLightYNorth+(vLightOrderNorth[1]*lightHeight-.5*lightDiameter)), lightDiameter, lightDiameter);
+            if(Settings.getSimSettings().getTrafficFlow() == Settings.TRAFFIC_FLOW_LEFT_HAND_TRAFFIC) {
+                g.fillOval((int) (vLightXNorth+(.3*lightWidth-.5*lightDiameter)), (int) (vLightYNorth+(vLightOrderNorth[1]*lightHeight-.5*lightDiameter)), lightDiameter, lightDiameter);
+            } else {
+                g.fillOval((int) (vLightXNorth+(.7*lightWidth-.5*lightDiameter)), (int) (vLightYNorth+(vLightOrderNorth[1]*lightHeight-.5*lightDiameter)), lightDiameter, lightDiameter);
+            }
+
+            // Yellow Vertical Turning Light
+            if(model.getvRoadIntersection().getLightState() == model.getvRoadIntersection().TURNING_YELLOW_LIGHT) {
+                g.setColor(Color.ORANGE);
+            } else {
+                g.setColor(Color.GRAY);
+            }
+            if(Settings.getSimSettings().getTrafficFlow() == Settings.TRAFFIC_FLOW_LEFT_HAND_TRAFFIC) {
+                g.drawString("→", (int) (vLightXNorth+(.7*lightWidth-.5*lightDiameter)), (int) (vLightYNorth+(vLightOrderNorth[1]*lightHeight+.5*lightDiameter)));
+            } else {
+                g.drawString("←", (int) (vLightXNorth+(.3*lightWidth-.5*lightDiameter)), (int) (vLightYNorth+(vLightOrderNorth[1]*lightHeight+.5*lightDiameter)));
+            }
 
             // Red Vertical Light
-            if(model.getvRoadIntersection().getLightState() == model.gethRoadIntersection().RED_LIGHT) {
+            if(model.getvRoadIntersection().getLightState() == model.gethRoadIntersection().RED_LIGHT || model.getvRoadIntersection().getLightState() == model.getvRoadIntersection().TURNING_GREEN_LIGHT || model.getvRoadIntersection().getLightState() == model.gethRoadIntersection().TURNING_YELLOW_LIGHT) {
                 g.setColor(Color.RED);
             } else {
                 g.setColor(Color.GRAY);
             }
-            g.fillOval((int) (vLightXNorth+(.5*lightWidth-.5*lightDiameter)), (int) (vLightYNorth+(vLightOrderNorth[2]*lightHeight-.5*lightDiameter)), lightDiameter, lightDiameter);
+            if(Settings.getSimSettings().getTrafficFlow() == Settings.TRAFFIC_FLOW_LEFT_HAND_TRAFFIC) {
+                g.fillOval((int) (vLightXNorth+(.3*lightWidth-.5*lightDiameter)), (int) (vLightYNorth+(vLightOrderNorth[2]*lightHeight-.5*lightDiameter)), lightDiameter, lightDiameter);
+            } else {
+                g.fillOval((int) (vLightXNorth+(.7*lightWidth-.5*lightDiameter)), (int) (vLightYNorth+(vLightOrderNorth[2]*lightHeight-.5*lightDiameter)), lightDiameter, lightDiameter);
+            }
 
+            // Red Vertical Turning Light
+            if(model.getvRoadIntersection().getLightState() != model.getvRoadIntersection().TURNING_GREEN_LIGHT && model.getvRoadIntersection().getLightState() != model.gethRoadIntersection().TURNING_YELLOW_LIGHT) {
+                g.setColor(Color.RED);
+            } else {
+                g.setColor(Color.GRAY);
+            }
+            if(Settings.getSimSettings().getTrafficFlow() == Settings.TRAFFIC_FLOW_LEFT_HAND_TRAFFIC) {
+                g.drawString("→", (int) (vLightXNorth+(.7*lightWidth-.5*lightDiameter)), (int) (vLightYNorth+(vLightOrderNorth[2]*lightHeight+.5*lightDiameter)));
+            } else {
+                g.drawString("←", (int) (vLightXNorth+(.3*lightWidth-.5*lightDiameter)), (int) (vLightYNorth+(vLightOrderNorth[2]*lightHeight+.5*lightDiameter)));
+            }
 
         }
+
+        // </editor-fold>
 
         g.setColor(Color.LIGHT_GRAY);
         //g.fillRect(0, 0, hRoadX, this.getHeight());
@@ -207,6 +411,7 @@ public class SimulationGUI extends JPanel {
     }
 
     private void renderCars(Road renderRoad, Graphics g, int roadX, int roadY, Boolean roadOrient, Boolean trafficFlowDirection) {
+
         g.setColor(Color.WHITE);
         int lNum = 0;
         int rectW, rectH, rectX, rectY, lanesXEastSouth, lanesYEastSouth, lanesXWestNorth, lanesYWestNorth;
@@ -234,19 +439,16 @@ public class SimulationGUI extends JPanel {
         } else {
             if(roadOrient == Settings.ROAD_SOUTH_NORTH) {
                 lanesXEastSouth = roadX;
-                lanesXWestNorth = roadX;
+                lanesXWestNorth = roadX+(renderRoad.getNoLanes(Settings.TRAFFIC_EAST_SOUTH)*Settings.LANE_WIDTH);
                 lanesYEastSouth = roadY;
-                lanesYWestNorth = roadY+(renderRoad.getNoLanes(Settings.TRAFFIC_WEST_NORTH)*Settings.LANE_WIDTH);
+                lanesYWestNorth = roadY;
             } else {
                 lanesXEastSouth = roadX;
                 lanesXWestNorth = roadX;
-                lanesYEastSouth = roadY+(renderRoad.getNoLanes(Settings.TRAFFIC_EAST_SOUTH)*Settings.LANE_WIDTH);
+                lanesYEastSouth = roadY+(renderRoad.getNoLanes(Settings.TRAFFIC_WEST_NORTH)*Settings.LANE_WIDTH);
                 lanesYWestNorth = roadY;
             }
         }
-        
-        lanesYEastSouth = roadY;
-        lanesYWestNorth = roadY;
         
         for(Lane l: renderRoad.getLanes(Settings.TRAFFIC_EAST_SOUTH)) {
             lNum++;
@@ -261,7 +463,9 @@ public class SimulationGUI extends JPanel {
                 g.fillRect(rectX, rectY, rectW, rectH);
             }
         }
-        
+
+        lNum = 0;
+
         for(Lane l: renderRoad.getLanes(Settings.TRAFFIC_WEST_NORTH)) {
             lNum++;
             for(Car c: l.getCars()) {

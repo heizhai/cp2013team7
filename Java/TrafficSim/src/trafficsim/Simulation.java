@@ -54,34 +54,38 @@ class SimulationEnvironment {
     /**
      * @param runCycles
      */
-    public void lightCycle(Boolean automatedExecution) {
+    public void lightCycle() {
         lightTimer = new Timer();
-        if(modelIntersection.gethRoadIntersection().getLightState() == modelIntersection.gethRoadIntersection().GREEN_LIGHT) {
+        if (modelIntersection.gethRoadIntersection().getLightState() == modelIntersection.gethRoadIntersection().GREEN_LIGHT) {
             modelIntersection.gethRoadIntersection().setLightState(modelIntersection.gethRoadIntersection().YELLOW_LIGHT);
-            lightTimer.schedule(new lightCycle(modelIntersection, window, automatedExecution), (((((modelIntersection.gethRoadIntersection().getRoad().getNoLanes(Settings.TRAFFIC_EAST_SOUTH)+modelIntersection.gethRoadIntersection().getRoad().getNoLanes(Settings.TRAFFIC_WEST_NORTH))*Settings.LANE_WIDTH)/Settings.CAR_MOVE)+Settings.CAR_LENGTH)*Settings.FRAME_LENGTH));
+            lightTimer.schedule(new lightCycle(modelIntersection, window), (((((modelIntersection.gethRoadIntersection().getRoad().getNoLanes(Settings.TRAFFIC_EAST_SOUTH)+modelIntersection.gethRoadIntersection().getRoad().getNoLanes(Settings.TRAFFIC_WEST_NORTH))*Settings.LANE_WIDTH)/Settings.CAR_MOVE)+Settings.CAR_LENGTH)*Settings.FRAME_LENGTH));
+        } else if (modelIntersection.gethRoadIntersection().getLightState() == modelIntersection.gethRoadIntersection().TURNING_GREEN_LIGHT) {
+            modelIntersection.gethRoadIntersection().setLightState(modelIntersection.gethRoadIntersection().TURNING_YELLOW_LIGHT);
+            lightTimer.schedule(new lightCycle(modelIntersection, window), (((((modelIntersection.gethRoadIntersection().getRoad().getNoLanes(Settings.TRAFFIC_EAST_SOUTH)+modelIntersection.gethRoadIntersection().getRoad().getNoLanes(Settings.TRAFFIC_WEST_NORTH))*Settings.LANE_WIDTH)/Settings.CAR_MOVE)+Settings.CAR_LENGTH)*Settings.FRAME_LENGTH));
         } else if (modelIntersection.getvRoadIntersection().getLightState() == modelIntersection.gethRoadIntersection().GREEN_LIGHT) {
             modelIntersection.getvRoadIntersection().setLightState(modelIntersection.getvRoadIntersection().YELLOW_LIGHT);
-            lightTimer.schedule(new lightCycle(modelIntersection, window, automatedExecution), (((((modelIntersection.gethRoadIntersection().getRoad().getNoLanes(Settings.TRAFFIC_EAST_SOUTH)+modelIntersection.gethRoadIntersection().getRoad().getNoLanes(Settings.TRAFFIC_WEST_NORTH))*Settings.LANE_WIDTH)/Settings.CAR_MOVE)+Settings.CAR_LENGTH)*Settings.FRAME_LENGTH));
+            lightTimer.schedule(new lightCycle(modelIntersection, window), (((((modelIntersection.gethRoadIntersection().getRoad().getNoLanes(Settings.TRAFFIC_EAST_SOUTH)+modelIntersection.gethRoadIntersection().getRoad().getNoLanes(Settings.TRAFFIC_WEST_NORTH))*Settings.LANE_WIDTH)/Settings.CAR_MOVE)+Settings.CAR_LENGTH)*Settings.FRAME_LENGTH));
+        } else if (modelIntersection.gethRoadIntersection().getLightState() == modelIntersection.gethRoadIntersection().TURNING_GREEN_LIGHT) {
+            modelIntersection.getvRoadIntersection().setLightState(modelIntersection.getvRoadIntersection().TURNING_YELLOW_LIGHT);
+            lightTimer.schedule(new lightCycle(modelIntersection, window), (((((modelIntersection.gethRoadIntersection().getRoad().getNoLanes(Settings.TRAFFIC_EAST_SOUTH)+modelIntersection.gethRoadIntersection().getRoad().getNoLanes(Settings.TRAFFIC_WEST_NORTH))*Settings.LANE_WIDTH)/Settings.CAR_MOVE)+Settings.CAR_LENGTH)*Settings.FRAME_LENGTH));
         }
     }
 
-    public void multiLightCycle(int noCycles) {
+    public void multiLightCycle() {
         lightMultiCyclesTimer = new Timer();
-        lightMultiCyclesTimer.scheduleAtFixedRate(new multiLightCycle(this, window, noCycles), 0, Settings.LIGHT_CYCLE_TIME);
+        lightMultiCyclesTimer.scheduleAtFixedRate(new multiLightCycle(this, window), 0, Settings.LIGHT_CYCLE_TIME);
     }
 
     public void run() throws InterruptedException {
         frameTimer = new Timer();
         this.modelIntersection.reset();
         Settings.getSimSettings().setSimulationRunning(true);
-        window.lightCycle(true);
         frameTimer.scheduleAtFixedRate(new simulationFrame(modelIntersection, window), 0, Settings.FRAME_LENGTH);
     }
 
     public void stop() throws InterruptedException {
         Settings.getSimSettings().setSimulationRunning(false);
         frameTimer.cancel();
-        window.lightCycle(false);
         modelIntersection.reset();
     }
 
@@ -116,40 +120,68 @@ class simulationFrame extends TimerTask {
         if(frameCount%Settings.CAR_FREQUENCY == 0 || frameCount == 1) {
             //Horizontal Road
             if(randGen.nextInt(100) < (Settings.getSimSettings().getHCarProbability()*100)) {
-                int lanePositionHWest;
-                int lanePositionHEast;
+                Car workingCar = null;
                 Road roadH = modelIntersection.gethRoadIntersection().getRoad();
                 int randHWest = randGen.nextInt(roadH.getNoLanes(Settings.TRAFFIC_WEST_NORTH));
                 int randHEast = randGen.nextInt(roadH.getNoLanes(Settings.TRAFFIC_EAST_SOUTH));
-                if(Settings.getSimSettings().getTrafficFlow() == Settings.TRAFFIC_FLOW_LEFT_HAND_TRAFFIC) {
-                    lanePositionHWest = roadH.getRoadLength();
-                    lanePositionHEast = 0;
-                } else {
-                    lanePositionHWest = 0;
-                    lanePositionHEast = roadH.getRoadLength();
+                int lanePositionHWest = roadH.getRoadLength();
+                int lanePositionHEast = 0;
+
+                modelIntersection.gethRoadIntersection().getRoad().getLane(Settings.TRAFFIC_WEST_NORTH, randHWest).addCar(workingCar = new Car(lanePositionHWest));
+
+                if(randGen.nextInt() < (Settings.getSimSettings().getTurnLeftProbability()*100)) {
+                    workingCar.setTurningLeft(true);
                 }
 
-                modelIntersection.gethRoadIntersection().getRoad().getLane(Settings.TRAFFIC_WEST_NORTH, randHWest).addCar(new Car(lanePositionHWest));
-                modelIntersection.gethRoadIntersection().getRoad().getLane(Settings.TRAFFIC_EAST_SOUTH, randHEast).addCar(new Car(lanePositionHEast));
+                if (randGen.nextInt() < (Settings.getSimSettings().getTurnRightProbability()*100)) {
+                    workingCar.setTurningRight(true);
+                }
+
+                workingCar = null;
+
+                modelIntersection.gethRoadIntersection().getRoad().getLane(Settings.TRAFFIC_EAST_SOUTH, randHEast).addCar(workingCar = new Car(lanePositionHEast));
+
+                if(randGen.nextInt() < (Settings.getSimSettings().getTurnLeftProbability()*100)) {
+                    workingCar.setTurningLeft(true);
+                }
+
+                if (randGen.nextInt() < (Settings.getSimSettings().getTurnRightProbability()*100)) {
+                    workingCar.setTurningRight(true);
+                }
+
             }
 
             if(randGen.nextInt(100) < (Settings.getSimSettings().getVCarProbability()*100)) {
             //Vertical Road
-                int lanePositionVNorth;
-                int lanePositionVSouth;
+                Car workingCar = null;
                 Road roadV = modelIntersection.getvRoadIntersection().getRoad();
                 int randVNorth = randGen.nextInt(roadV.getNoLanes(Settings.TRAFFIC_WEST_NORTH));
                 int randVSouth = randGen.nextInt(roadV.getNoLanes(Settings.TRAFFIC_EAST_SOUTH));
-                if(Settings.getSimSettings().getTrafficFlow() == Settings.TRAFFIC_FLOW_LEFT_HAND_TRAFFIC) {
-                    lanePositionVNorth = roadV.getRoadLength();
-                    lanePositionVSouth = 0;
-                } else {
-                    lanePositionVNorth = 0;
-                    lanePositionVSouth = roadV.getRoadLength();
+                int lanePositionVNorth = roadV.getRoadLength();
+                int lanePositionVSouth = 0;
+
+                modelIntersection.getvRoadIntersection().getRoad().getLane(Settings.TRAFFIC_WEST_NORTH, randVNorth).addCar(workingCar = new Car(lanePositionVNorth));
+
+                if(randGen.nextInt() < (Settings.getSimSettings().getTurnLeftProbability()*100)) {
+                    workingCar.setTurningLeft(true);
                 }
 
-                modelIntersection.getvRoadIntersection().getRoad().getLane(Settings.TRAFFIC_WEST_NORTH, randVNorth).addCar(new Car(lanePositionVNorth));
-                modelIntersection.getvRoadIntersection().getRoad().getLane(Settings.TRAFFIC_EAST_SOUTH, randVSouth).addCar(new Car(lanePositionVSouth));
+                if (randGen.nextInt() < (Settings.getSimSettings().getTurnRightProbability()*100)) {
+                    workingCar.setTurningRight(true);
+                }
+
+                workingCar = null;
+
+                modelIntersection.getvRoadIntersection().getRoad().getLane(Settings.TRAFFIC_EAST_SOUTH, randVSouth).addCar(workingCar = new Car(lanePositionVSouth));
+                
+                if(randGen.nextInt() < (Settings.getSimSettings().getTurnLeftProbability()*100)) {
+                    workingCar.setTurningLeft(true);
+                }
+
+                if (randGen.nextInt() < (Settings.getSimSettings().getTurnRightProbability()*100)) {
+                    workingCar.setTurningRight(true);
+                }
+
             }
         }
         carFrame(modelIntersection.getvRoadIntersection(), modelIntersection.gethRoadIntersection());
@@ -177,6 +209,7 @@ class simulationFrame extends TimerTask {
     private void carFrameProcess(RoadIntersection roadIntersection, RoadIntersection intersectingRoadIntersection, Lane lane, Car car, Boolean trafficDirection) {
         
         int trafficCycleDistance;
+        int middleLine;
         int stopLine;
 
         if(trafficDirection == Settings.TRAFFIC_EAST_SOUTH) {
@@ -189,10 +222,14 @@ class simulationFrame extends TimerTask {
         //Move The Car Forward
         if(car.getStopped() == false) {
             if(randGen.nextDouble()*Settings.BREAKDOWN_PROBABILITY_LIMIT < Settings.getSimSettings().getBreakdownProbability()) {
-                car.setBrokenDown(true);
+                car.breakdown();
             } else {
                 car.moveCar(trafficCycleDistance);
             }
+
+            //Calculated the Middle Line Position
+
+            middleLine = intersectingRoadIntersection.getIntersectionCenter();
 
             //Calculate the Stop Line Position
             
@@ -209,19 +246,146 @@ class simulationFrame extends TimerTask {
                     stopLine = roadIntersection.getIntersectionCenter()+(intersectingRoadIntersection.getRoad().getNoLanes(Settings.TRAFFIC_WEST_NORTH)*Settings.LANE_WIDTH);
                 }
             }
-            
-            if(car.intersects(stopLine, trafficDirection) && (roadIntersection.getLightState() != RoadIntersection.GREEN_LIGHT)) {
-                car.setStopped(true);
-                car.moveCar(-1*(trafficCycleDistance));
+
+            //-------------------------------------------//
+            // Intersection Rules - Stopping and Turning //
+            //-------------------------------------------//
+
+            int directionMultiplier = 0;
+
+            if(trafficDirection == Settings.TRAFFIC_EAST_SOUTH) {
+                directionMultiplier = 1;
+            } else {
+                directionMultiplier = -1;
             }
 
+            if(car.intersects(stopLine, trafficDirection) && (roadIntersection.getLightState() != RoadIntersection.GREEN_LIGHT)) {
+                //Light is red or yellow, car is at line... STOP!
+                car.stopLight();
+
+            } else  if(
+                    car.intersects((stopLine+((Settings.CAR_LENGTH/2)*directionMultiplier)), trafficDirection)
+                    && (Settings.getSimSettings().getTrafficFlow() == Settings.TRAFFIC_FLOW_LEFT_HAND_TRAFFIC)
+                    && (car.getTurningLeft() == true)
+                    && (roadIntersection.getLightState() == RoadIntersection.GREEN_LIGHT)
+            ) {
+                //Car is turning left into first lane
+
+                Lane turningLane = null;
+                int laneLocation = 0;
+                
+                if(trafficDirection == Settings.TRAFFIC_EAST_SOUTH) {
+                    if(lane == roadIntersection.getRoad().getLane(trafficDirection, (roadIntersection.getRoad().getNoLanes(trafficDirection)-1))) {
+                        turningLane = intersectingRoadIntersection.getRoad().getLane(trafficDirection, 0);
+                        laneLocation = intersectingRoadIntersection.getIntersectionCenter()+(((roadIntersection.getRoad().getNoLanes(trafficDirection)-1)*Settings.LANE_WIDTH));
+                        car.turn(turningLane, lane, laneLocation);
+                    }
+                } else  {
+                    if(lane == roadIntersection.getRoad().getLane(trafficDirection, 0)) {
+                        turningLane = intersectingRoadIntersection.getRoad().getLane(trafficDirection, (intersectingRoadIntersection.getRoad().getNoLanes(trafficDirection)-1));
+                        laneLocation = intersectingRoadIntersection.getIntersectionCenter()-(((roadIntersection.getRoad().getNoLanes(trafficDirection)-1)*Settings.LANE_WIDTH))-Settings.CAR_LENGTH;
+                        car.turn(turningLane, lane, laneLocation);
+                    }
+                }
+                
+            } else if(
+                    car.intersects((stopLine+(Settings.CAR_LENGTH/2)*directionMultiplier), trafficDirection)
+                    && (Settings.getSimSettings().getTrafficFlow() == Settings.TRAFFIC_FLOW_RIGHT_HAND_TRAFFIC)
+                    && (car.getTurningRight() == true)
+                    && (roadIntersection.getLightState() == RoadIntersection.GREEN_LIGHT)
+            ) {
+                //Car is turning right into first lane
+
+                Lane turningLane = null;
+                int laneLocation = 0;
+
+                if((trafficDirection == Settings.TRAFFIC_EAST_SOUTH && roadIntersection.getRoadOrientation() == Settings.ROAD_SOUTH_NORTH) || (trafficDirection == Settings.TRAFFIC_WEST_NORTH && roadIntersection.getRoadOrientation() == Settings.ROAD_EAST_WEST)) {
+                    // Traffic heading South or West
+                    if(lane == roadIntersection.getRoad().getLane(trafficDirection, 0)) {
+                        // Traffic in the Left/Top Lane
+                        if(roadIntersection.getRoadOrientation() == Settings.ROAD_SOUTH_NORTH) {
+                            // Traffic Heading South turning West
+                            turningLane = intersectingRoadIntersection.getRoad().getLane(Settings.TRAFFIC_WEST_NORTH, 0);
+                        } else {
+                            // Traffic Heading West turning North
+                            turningLane = intersectingRoadIntersection.getRoad().getLane(Settings.TRAFFIC_WEST_NORTH, (intersectingRoadIntersection.getRoad().getNoLanes(trafficDirection)-1));
+                        }                        
+                        laneLocation = intersectingRoadIntersection.getIntersectionCenter()-(((roadIntersection.getRoad().getNoLanes(trafficDirection))*Settings.LANE_WIDTH))-(Settings.CAR_LENGTH/2);
+                        car.turn(turningLane, lane, laneLocation);
+                    }
+                } else {
+                    // Traffic heading North or East
+                    if(lane == roadIntersection.getRoad().getLane(trafficDirection, (roadIntersection.getRoad().getNoLanes(trafficDirection)-1))) {
+                        // Traffic in the Bottom/Right Lane
+                        if(roadIntersection.getRoadOrientation() == Settings.ROAD_SOUTH_NORTH) {
+                            // Traffic heading North turning East
+                            turningLane = intersectingRoadIntersection.getRoad().getLane(Settings.TRAFFIC_EAST_SOUTH, (intersectingRoadIntersection.getRoad().getNoLanes(trafficDirection)-1));
+                        } else {
+                            // Traffic heading East turning South
+                            turningLane = intersectingRoadIntersection.getRoad().getLane(Settings.TRAFFIC_EAST_SOUTH, 0);
+                        }                        
+                        laneLocation = intersectingRoadIntersection.getIntersectionCenter()+(((roadIntersection.getRoad().getNoLanes(trafficDirection))*Settings.LANE_WIDTH)-(Settings.CAR_LENGTH/2));
+                        car.turn(turningLane, lane, laneLocation);
+                    }
+                }
+
+            } else if(
+                    car.intersects((middleLine+(Settings.CAR_LENGTH/2)*directionMultiplier), trafficDirection)
+                    && (Settings.getSimSettings().getTrafficFlow() == Settings.TRAFFIC_FLOW_LEFT_HAND_TRAFFIC)
+                    && (car.getTurningRight() == true)
+                    && (roadIntersection.getLightState() == RoadIntersection.GREEN_LIGHT) // CHANGE TO TURNING WHEN IMPLEMENTED
+            ) {
+                //Car is turning right into second lane
+
+                Lane turningLane = null;
+                int laneLocation = 0;
+
+                if((trafficDirection == Settings.TRAFFIC_EAST_SOUTH && roadIntersection.getRoadOrientation() == Settings.ROAD_SOUTH_NORTH) || (trafficDirection == Settings.TRAFFIC_WEST_NORTH && roadIntersection.getRoadOrientation() == Settings.ROAD_EAST_WEST)) {
+                    // Traffic heading South or West
+                    if(lane == roadIntersection.getRoad().getLane(trafficDirection, 0)) {
+                        // Traffic in the Left/Top Lane
+                        if(roadIntersection.getRoadOrientation() == Settings.ROAD_SOUTH_NORTH) {
+                            // Traffic Heading South turning West
+                            turningLane = intersectingRoadIntersection.getRoad().getLane(Settings.TRAFFIC_WEST_NORTH, 0);
+                        } else {
+                            // Traffic Heading West turning North
+                            turningLane = intersectingRoadIntersection.getRoad().getLane(Settings.TRAFFIC_WEST_NORTH, (intersectingRoadIntersection.getRoad().getNoLanes(trafficDirection)-1));
+                        }
+                        laneLocation = intersectingRoadIntersection.getIntersectionCenter()-(Settings.CAR_LENGTH/2);
+                        car.turn(turningLane, lane, laneLocation);
+                    }
+                } else {
+                    // Traffic heading North or East
+                    if(lane == roadIntersection.getRoad().getLane(trafficDirection, (roadIntersection.getRoad().getNoLanes(trafficDirection)-1))) {
+                        // Traffic in the Bottom/Right Lane
+                        if(roadIntersection.getRoadOrientation() == Settings.ROAD_SOUTH_NORTH) {
+                            // Traffic heading North turning East
+                            turningLane = intersectingRoadIntersection.getRoad().getLane(Settings.TRAFFIC_EAST_SOUTH, (intersectingRoadIntersection.getRoad().getNoLanes(trafficDirection)-1));
+                        } else {
+                            // Traffic heading East turning South
+                            turningLane = intersectingRoadIntersection.getRoad().getLane(Settings.TRAFFIC_EAST_SOUTH, 0);
+                        }
+                        laneLocation = intersectingRoadIntersection.getIntersectionCenter()+(Settings.CAR_LENGTH/2);
+                        car.turn(turningLane, lane, laneLocation);
+                    }
+                }
+                
+            } else if(
+                    car.intersects((middleLine+(Settings.CAR_LENGTH/2)), trafficDirection)
+                    && (Settings.getSimSettings().getTrafficFlow() == Settings.TRAFFIC_FLOW_RIGHT_HAND_TRAFFIC)
+                    && (car.getTurningLeft() == true)
+                    //&& (roadIntersection.getRoad().getLane(trafficDirection, (roadIntersection.getRoad().getNoLanes(trafficDirection)-1)) == lane)
+                    && (roadIntersection.getLightState() == RoadIntersection.TURNING_GREEN_LIGHT)
+            ) {
+                //TO BE IMPLEMENTED
+            }
 
             if(car.intersects(lane.getCarInfront(car, trafficDirection))) {
 
                 boolean lanesChanged = false;
 
                 for(Lane nl: roadIntersection.getRoad().getNeighbouringLanes(lane, trafficDirection)) {
-                    if(nl.isLaneClear(car.getLanePosition())) {
+                    if(nl.isLaneClear((car.getLanePosition()+(trafficCycleDistance*2)))) {
                         roadIntersection.getRoad().trafficChangeLane(lane, car, nl);
 
                         lanesChanged = true;
@@ -230,7 +394,34 @@ class simulationFrame extends TimerTask {
                 }
                 car.setStopped(!lanesChanged);
                 if(lanesChanged == false) {
-                    car.moveCar(-(trafficCycleDistance*2));
+                    car.moveCar(-2*trafficCycleDistance);
+                }
+            }
+        } else {
+
+            Car fakeCar = new Car(car.getLanePosition());
+            fakeCar.moveCar(trafficCycleDistance*2);
+
+            if(fakeCar.intersects(lane.getCarInfront(car, trafficDirection)) && lane.getCarInfront(car, trafficDirection).getBrokenDown() == true) {
+                boolean lanesChanged = false;
+
+                for(Lane nl: roadIntersection.getRoad().getNeighbouringLanes(lane, trafficDirection)) {
+                    if(nl.isLaneClear(car.getLanePosition()+trafficCycleDistance)) {
+                        roadIntersection.getRoad().trafficChangeLane(lane, car, nl);
+
+                        lanesChanged = true;
+                        break;
+                    }
+                }
+                
+                if(lanesChanged == true) {
+                    car.setStopped(false);
+                }
+
+            } else if(car.getBrokenDown() != true && car.getLightStopped() != true) {
+                if(!fakeCar.intersects(lane.getCarInfront(car, trafficDirection))) {
+                    //car infront has moved!
+                    car.setStopped(false);
                 }
             }
         }
@@ -247,25 +438,23 @@ class lightCycle extends TimerTask {
 
         Intersection intersection;
         mainWindow window;
-        Boolean automatedExecution;
 
-        lightCycle(Intersection intersection, mainWindow window, Boolean automatedExecution) {
+        lightCycle(Intersection intersection, mainWindow window) {
             this.intersection = intersection;
             this.window = window;
-            this.automatedExecution = automatedExecution;
         }
 
         public void run() {
            if(intersection.gethRoadIntersection().getLightState() == intersection.gethRoadIntersection().YELLOW_LIGHT) {
                intersection.gethRoadIntersection().setLightState(intersection.gethRoadIntersection().RED_LIGHT);
-               intersection.getvRoadIntersection().setLightState(intersection.getvRoadIntersection().GREEN_LIGHT);
+               intersection.getvRoadIntersection().setLightState(intersection.getvRoadIntersection().TURNING_GREEN_LIGHT);
+           } else if (intersection.gethRoadIntersection().getLightState() == intersection.gethRoadIntersection().TURNING_YELLOW_LIGHT) {
+               intersection.gethRoadIntersection().setLightState(intersection.gethRoadIntersection().GREEN_LIGHT);
            } else if (intersection.getvRoadIntersection().getLightState() == intersection.getvRoadIntersection().YELLOW_LIGHT) {
                intersection.getvRoadIntersection().setLightState(intersection.getvRoadIntersection().RED_LIGHT);
-               intersection.gethRoadIntersection().setLightState(intersection.gethRoadIntersection().GREEN_LIGHT);
-           }
-           if(this.automatedExecution == false) {
-            // Do not give user feedback if this is an automated cycle.
-            window.lightCycle(true);
+               intersection.gethRoadIntersection().setLightState(intersection.gethRoadIntersection().TURNING_GREEN_LIGHT);
+           } else if (intersection.getvRoadIntersection().getLightState() == intersection.getvRoadIntersection().TURNING_YELLOW_LIGHT) {
+               intersection.getvRoadIntersection().setLightState(intersection.getvRoadIntersection().GREEN_LIGHT);
            }
         }
 }
@@ -281,19 +470,13 @@ class multiLightCycle extends TimerTask {
         mainWindow window;
         int noCycles;
 
-        multiLightCycle(SimulationEnvironment simulation, mainWindow window, int noCycles) {
+        multiLightCycle(SimulationEnvironment simulation, mainWindow window) {
             this.simulation = simulation;
             this.window = window;
-            this.noCycles = noCycles;
         }
 
         public void run() {
-           simulation.lightCycle(true);
-           noCycles--;
-           if(noCycles <= 0) {
-               window.lightCycle(true);
-               cancel();
-           }
+           simulation.lightCycle();
         }
 }
 

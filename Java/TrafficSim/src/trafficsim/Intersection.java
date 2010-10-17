@@ -16,8 +16,8 @@ public class Intersection {
     private RoadIntersection hRoadIntersection;
 
     Intersection() {
-        vRoadIntersection = new RoadIntersection(Settings.getSimSettings().getvIntersectionCenter(), Settings.getSimSettings().getVNorthLanes(), Settings.getSimSettings().getVSouthLanes(), Settings.getSimSettings().getvLaneLength());
-        hRoadIntersection = new RoadIntersection(Settings.getSimSettings().gethIntersectionCenter(), Settings.getSimSettings().getHWestLanes(), Settings.getSimSettings().getHEastLanes(), Settings.getSimSettings().gethLaneLength());
+        vRoadIntersection = new RoadIntersection(Settings.getSimSettings().getvIntersectionCenter(), Settings.getSimSettings().getVNorthLanes(), Settings.getSimSettings().getVSouthLanes(), Settings.getSimSettings().getvLaneLength(), Settings.getSimSettings().getvRoadSpeed(), Settings.ROAD_SOUTH_NORTH);
+        hRoadIntersection = new RoadIntersection(Settings.getSimSettings().gethIntersectionCenter(), Settings.getSimSettings().getHWestLanes(), Settings.getSimSettings().getHEastLanes(), Settings.getSimSettings().gethLaneLength(), Settings.getSimSettings().gethRoadSpeed(), Settings.ROAD_EAST_WEST);
         vRoadIntersection.setLightState(vRoadIntersection.GREEN_LIGHT);
     }
 
@@ -50,8 +50,8 @@ public class Intersection {
     }
 
     public void reset() {
-        vRoadIntersection = new RoadIntersection(Settings.getSimSettings().getvIntersectionCenter(), Settings.getSimSettings().getVNorthLanes(), Settings.getSimSettings().getVSouthLanes(), Settings.getSimSettings().getvLaneLength());
-        hRoadIntersection = new RoadIntersection(Settings.getSimSettings().gethIntersectionCenter(), Settings.getSimSettings().getHWestLanes(), Settings.getSimSettings().getHEastLanes(), Settings.getSimSettings().gethLaneLength());
+        vRoadIntersection = new RoadIntersection(Settings.getSimSettings().getvIntersectionCenter(), Settings.getSimSettings().getVNorthLanes(), Settings.getSimSettings().getVSouthLanes(), Settings.getSimSettings().getvLaneLength(), Settings.getSimSettings().getvRoadSpeed(), Settings.ROAD_SOUTH_NORTH);
+        hRoadIntersection = new RoadIntersection(Settings.getSimSettings().gethIntersectionCenter(), Settings.getSimSettings().getHWestLanes(), Settings.getSimSettings().getHEastLanes(), Settings.getSimSettings().gethLaneLength(), Settings.getSimSettings().gethRoadSpeed(), Settings.ROAD_EAST_WEST);
         vRoadIntersection.setLightState(vRoadIntersection.GREEN_LIGHT);
     }
 
