@@ -65,7 +65,7 @@ class SimulationEnvironment {
         } else if (modelIntersection.getvRoadIntersection().getLightState() == modelIntersection.gethRoadIntersection().GREEN_LIGHT) {
             modelIntersection.getvRoadIntersection().setLightState(modelIntersection.getvRoadIntersection().YELLOW_LIGHT);
             lightTimer.schedule(new lightCycle(modelIntersection, window), (((((modelIntersection.gethRoadIntersection().getRoad().getNoLanes(Settings.TRAFFIC_EAST_SOUTH)+modelIntersection.gethRoadIntersection().getRoad().getNoLanes(Settings.TRAFFIC_WEST_NORTH))*Settings.LANE_WIDTH)/Settings.CAR_MOVE)+Settings.CAR_LENGTH)*Settings.FRAME_LENGTH));
-        } else if (modelIntersection.gethRoadIntersection().getLightState() == modelIntersection.gethRoadIntersection().TURNING_GREEN_LIGHT) {
+        } else if (modelIntersection.getvRoadIntersection().getLightState() == modelIntersection.gethRoadIntersection().TURNING_GREEN_LIGHT) {
             modelIntersection.getvRoadIntersection().setLightState(modelIntersection.getvRoadIntersection().TURNING_YELLOW_LIGHT);
             lightTimer.schedule(new lightCycle(modelIntersection, window), (((((modelIntersection.gethRoadIntersection().getRoad().getNoLanes(Settings.TRAFFIC_EAST_SOUTH)+modelIntersection.gethRoadIntersection().getRoad().getNoLanes(Settings.TRAFFIC_WEST_NORTH))*Settings.LANE_WIDTH)/Settings.CAR_MOVE)+Settings.CAR_LENGTH)*Settings.FRAME_LENGTH));
         }
