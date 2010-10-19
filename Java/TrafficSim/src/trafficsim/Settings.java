@@ -40,12 +40,12 @@ public class Settings {
     
     private short hWestLanes = 3;
     private short hEastLanes = 3;
-    private short vNorthLanes = 2;
+    private short vNorthLanes = 3;
     private short vSouthLanes = 4;
     private int vLaneLength = this.DEFAULT_ROAD_LENGTH;
     private int hLaneLength = this.DEFAULT_ROAD_LENGTH;
     private int vRoadSpeed = this.DEFAULT_ROAD_SPEED;
-    private int hRoadSpeed = this.DEFAULT_ROAD_SPEED;
+    private int hRoadSpeed = 2;//this.DEFAULT_ROAD_SPEED;
     private int vIntersectionCenter = 250;
     private int hIntersectionCenter = 250;
     private double hCarProbability = .4;

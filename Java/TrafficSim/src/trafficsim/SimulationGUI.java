@@ -204,7 +204,7 @@ public class SimulationGUI extends JPanel {
             }
 
             if(model.gethRoadIntersection().getLightState() == model.gethRoadIntersection().TURNING_YELLOW_LIGHT) {
-                g.setColor(Color.GREEN);
+                g.setColor(Color.ORANGE);
             } else {
                 g.setColor(Color.GRAY);
             }

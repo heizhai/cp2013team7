@@ -250,6 +250,8 @@ class simulationFrame extends TimerTask {
             //-------------------------------------------//
             // Intersection Rules - Stopping and Turning //
             //-------------------------------------------//
+            // Note: many of the conditional statements in this section are
+            // multi-lined and indented for easier reading and understanding
 
             int directionMultiplier = 0;
 
@@ -259,12 +261,51 @@ class simulationFrame extends TimerTask {
                 directionMultiplier = -1;
             }
 
-            if(car.intersects(stopLine, trafficDirection) && (roadIntersection.getLightState() != RoadIntersection.GREEN_LIGHT)) {
-                //Light is red or yellow, car is at line... STOP!
-                car.stopLight();
+            if(car.intersects(stopLine, roadIntersection.getRoad().getRoadSpeed(), trafficDirection)) {
+                //Rules for when cars should stop.
+                if (
+                     roadIntersection.getLightState() != RoadIntersection.GREEN_LIGHT
+                ) {
+                    car.stopLight();
+                    car.moveCar(-directionMultiplier*Settings.CAR_MOVE);
+                }
+                
+                if (
+                     roadIntersection.getLightState() != RoadIntersection.TURNING_GREEN_LIGHT
+                     && car.getTurningRight() == true
+                     && Settings.getSimSettings().getTrafficFlow() == Settings.TRAFFIC_FLOW_LEFT_HAND_TRAFFIC
+                     && ((roadIntersection.getRoadOrientation() == Settings.ROAD_SOUTH_NORTH && trafficDirection == Settings.TRAFFIC_EAST_SOUTH) || (roadIntersection.getRoadOrientation() == Settings.ROAD_EAST_WEST && trafficDirection == Settings.TRAFFIC_WEST_NORTH))
+                     && lane == roadIntersection.getRoad().getLane(trafficDirection, 0)
+                ) {
+                    car.stopLight();
+                } else if (
+                     roadIntersection.getLightState() != RoadIntersection.TURNING_GREEN_LIGHT
+                     && car.getTurningRight() == true
+                     && Settings.getSimSettings().getTrafficFlow() == Settings.TRAFFIC_FLOW_LEFT_HAND_TRAFFIC
+                     && ((roadIntersection.getRoadOrientation() == Settings.ROAD_SOUTH_NORTH && trafficDirection == Settings.TRAFFIC_WEST_NORTH) || (roadIntersection.getRoadOrientation() == Settings.ROAD_EAST_WEST && trafficDirection == Settings.TRAFFIC_EAST_SOUTH))
+                     && lane == roadIntersection.getRoad().getLane(trafficDirection, (roadIntersection.getRoad().getNoLanes(trafficDirection)-1))
+                ) {
+                    car.stopLight();
+                } else if (
+                     roadIntersection.getLightState() != RoadIntersection.TURNING_GREEN_LIGHT
+                     && car.getTurningLeft() == true
+                     && Settings.getSimSettings().getTrafficFlow() == Settings.TRAFFIC_FLOW_RIGHT_HAND_TRAFFIC
+                     && ((roadIntersection.getRoadOrientation() == Settings.ROAD_SOUTH_NORTH && trafficDirection == Settings.TRAFFIC_WEST_NORTH) || (roadIntersection.getRoadOrientation() == Settings.ROAD_EAST_WEST && trafficDirection == Settings.TRAFFIC_EAST_SOUTH))
+                     && lane == roadIntersection.getRoad().getLane(trafficDirection, 0)
+                ) {
+                    car.stopLight();
+                } else if (
+                     roadIntersection.getLightState() != RoadIntersection.TURNING_GREEN_LIGHT
+                     && car.getTurningLeft() == true
+                     && Settings.getSimSettings().getTrafficFlow() == Settings.TRAFFIC_FLOW_RIGHT_HAND_TRAFFIC
+                     && ((roadIntersection.getRoadOrientation() == Settings.ROAD_SOUTH_NORTH && trafficDirection == Settings.TRAFFIC_EAST_SOUTH) || (roadIntersection.getRoadOrientation() == Settings.ROAD_EAST_WEST && trafficDirection == Settings.TRAFFIC_WEST_NORTH))
+                     && lane == roadIntersection.getRoad().getLane(trafficDirection, (roadIntersection.getRoad().getNoLanes(trafficDirection)-1))
+                ) {
+                    car.stopLight();
+                }
 
             } else  if(
-                    car.intersects((stopLine+((Settings.CAR_LENGTH/2)*directionMultiplier)), trafficDirection)
+                    car.intersects((stopLine+((Settings.CAR_LENGTH/2)*directionMultiplier)), roadIntersection.getRoad().getRoadSpeed(), trafficDirection)
                     && (Settings.getSimSettings().getTrafficFlow() == Settings.TRAFFIC_FLOW_LEFT_HAND_TRAFFIC)
                     && (car.getTurningLeft() == true)
                     && (roadIntersection.getLightState() == RoadIntersection.GREEN_LIGHT)
@@ -289,7 +330,7 @@ class simulationFrame extends TimerTask {
                 }
                 
             } else if(
-                    car.intersects((stopLine+(Settings.CAR_LENGTH/2)*directionMultiplier), trafficDirection)
+                    car.intersects((stopLine+(Settings.CAR_LENGTH/2)*directionMultiplier), roadIntersection.getRoad().getRoadSpeed(), trafficDirection)
                     && (Settings.getSimSettings().getTrafficFlow() == Settings.TRAFFIC_FLOW_RIGHT_HAND_TRAFFIC)
                     && (car.getTurningRight() == true)
                     && (roadIntersection.getLightState() == RoadIntersection.GREEN_LIGHT)
@@ -330,10 +371,10 @@ class simulationFrame extends TimerTask {
                 }
 
             } else if(
-                    car.intersects((middleLine+(Settings.CAR_LENGTH/2)*directionMultiplier), trafficDirection)
+                    car.intersects((middleLine+(Settings.CAR_LENGTH/2)*directionMultiplier), roadIntersection.getRoad().getRoadSpeed(), trafficDirection)
                     && (Settings.getSimSettings().getTrafficFlow() == Settings.TRAFFIC_FLOW_LEFT_HAND_TRAFFIC)
                     && (car.getTurningRight() == true)
-                    && (roadIntersection.getLightState() == RoadIntersection.GREEN_LIGHT) // CHANGE TO TURNING WHEN IMPLEMENTED
+                    && (roadIntersection.getLightState() == RoadIntersection.TURNING_GREEN_LIGHT)
             ) {
                 //Car is turning right into second lane
 
@@ -371,7 +412,7 @@ class simulationFrame extends TimerTask {
                 }
                 
             } else if(
-                    car.intersects((middleLine+(Settings.CAR_LENGTH/2)), trafficDirection)
+                    car.intersects((middleLine+(Settings.CAR_LENGTH/2)), roadIntersection.getRoad().getRoadSpeed(), trafficDirection)
                     && (Settings.getSimSettings().getTrafficFlow() == Settings.TRAFFIC_FLOW_RIGHT_HAND_TRAFFIC)
                     && (car.getTurningLeft() == true)
                     //&& (roadIntersection.getRoad().getLane(trafficDirection, (roadIntersection.getRoad().getNoLanes(trafficDirection)-1)) == lane)

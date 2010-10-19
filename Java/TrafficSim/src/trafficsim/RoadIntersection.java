@@ -62,7 +62,25 @@ public class RoadIntersection {
         }
         this.lightState = lightState;
         if (this.lightState == GREEN_LIGHT) {
-            carStoppedReset();
+            carStoppedResetForward();
+        } else if (this.lightState == TURNING_GREEN_LIGHT) {
+            if(Settings.getSimSettings().getTrafficFlow() ==  Settings.TRAFFIC_FLOW_LEFT_HAND_TRAFFIC) {
+                if(this.getRoadOrientation() == Settings.ROAD_EAST_WEST) {
+                    this.carLaneStoppedReset(this.getRoad().getLane(Settings.TRAFFIC_WEST_NORTH, 0), true);
+                    this.carLaneStoppedReset(this.getRoad().getLane(Settings.TRAFFIC_EAST_SOUTH, (this.getRoad().getNoLanes(Settings.TRAFFIC_EAST_SOUTH)-1)), true);
+                } else {
+                    this.carLaneStoppedReset(this.getRoad().getLane(Settings.TRAFFIC_WEST_NORTH, (this.getRoad().getNoLanes(Settings.TRAFFIC_WEST_NORTH)-1)), true);
+                    this.carLaneStoppedReset(this.getRoad().getLane(Settings.TRAFFIC_EAST_SOUTH, 0), true);
+                }
+            } else {
+                if(this.getRoadOrientation() == Settings.ROAD_EAST_WEST) {
+                    this.carLaneStoppedReset(this.getRoad().getLane(Settings.TRAFFIC_WEST_NORTH, 0), true);
+                    this.carLaneStoppedReset(this.getRoad().getLane(Settings.TRAFFIC_EAST_SOUTH, (this.getRoad().getNoLanes(Settings.TRAFFIC_EAST_SOUTH)-1)), true);
+                } else {
+                    this.carLaneStoppedReset(this.getRoad().getLane(Settings.TRAFFIC_WEST_NORTH, (this.getRoad().getNoLanes(Settings.TRAFFIC_WEST_NORTH)-1)), true);
+                    this.carLaneStoppedReset(this.getRoad().getLane(Settings.TRAFFIC_EAST_SOUTH, 0), true);
+                }
+            }
         }
     }
 
@@ -85,19 +103,32 @@ public class RoadIntersection {
     }
 
     /**
-     * Sets the location of the Intersection's stop line on the road.
+     * Resets the stop setting of cars after light changes
      *
      * @param intersectionCenter the intersectionCenter to set
      */
-    public void carStoppedReset() {
+    public void carStoppedResetForward() {
         for(Lane l: this.road.getLanes(Settings.TRAFFIC_EAST_SOUTH)) {
-            for(Car c: l.getCars()) {
-                c.setStopped(false);
-            }
+            carLaneStoppedReset(l, false);
         }
         for(Lane l: this.road.getLanes(Settings.TRAFFIC_WEST_NORTH)) {
-            for(Car c: l.getCars()) {
-                c.setStopped(false);
+            carLaneStoppedReset(l, false);
+        }
+    }
+
+    /**
+     * resets the stop setting of
+     *
+     * @param intersectionCenter the intersectionCenter to set
+     */
+    public void carLaneStoppedReset(Lane lane, Boolean turningCars) {
+        for(Car c: lane.getCars()) {
+            if(turningCars) {
+                if((Settings.getSimSettings().getTrafficFlow() == Settings.TRAFFIC_FLOW_LEFT_HAND_TRAFFIC && c.getTurningRight() == true) || (Settings.getSimSettings().getTrafficFlow() == Settings.TRAFFIC_FLOW_RIGHT_HAND_TRAFFIC && c.getTurningLeft() == true)) {
+                    c.setStopped(false);
+                }
+            } else {
+                c.setStopped(turningCars);
             }
         }
     }
