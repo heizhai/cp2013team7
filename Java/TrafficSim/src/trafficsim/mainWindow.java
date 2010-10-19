@@ -36,8 +36,10 @@ public class mainWindow extends javax.swing.JFrame {
     private JMenuItem exitMenuItem;
 
     //Settings Menu
-    private JMenuItem setHLanesMenuItem;
-    private JMenuItem setVLanesMenuItem;
+    private JMenuItem setSouthLanesMenuItem;
+    private JMenuItem setNorthLanesMenuItem;
+    private JMenuItem setEastLanesMenuItem;
+    private JMenuItem setWestLanesMenuItem;
     private JMenuItem setHProbMenuItem;
     private JMenuItem setVProbMenuItem;
 
@@ -51,7 +53,7 @@ public class mainWindow extends javax.swing.JFrame {
     private JPanel controlPanel;
     private JButton runSimulationButton;
     private JButton stopSimulationButton;
-    private JButton lightsCycleButton;
+    private JButton resetSimulationButton;
 
     public mainWindow(Intersection modelIntersection, SimulationEnvironment simulation, String title) {
 
@@ -67,8 +69,10 @@ public class mainWindow extends javax.swing.JFrame {
         exitMenuItem = new JMenuItem();
        
         //Settings Menu Initialisation
-        setHLanesMenuItem =  new JMenuItem();
-        setVLanesMenuItem = new JMenuItem();
+        setSouthLanesMenuItem =  new JMenuItem();
+        setNorthLanesMenuItem =  new JMenuItem();
+        setEastLanesMenuItem = new JMenuItem();
+        setWestLanesMenuItem = new JMenuItem();
         setHProbMenuItem = new JMenuItem();
         setVProbMenuItem = new JMenuItem();
         setLHD = new JCheckBoxMenuItem();
@@ -86,8 +90,10 @@ public class mainWindow extends javax.swing.JFrame {
         exitMenuItem.setText("Exit");
 
         //Set Settings Menu Text
-        setHLanesMenuItem.setText("No. Horizontal Lanes");
-        setVLanesMenuItem.setText("No. Vertical Lanes");
+        setSouthLanesMenuItem.setText("Southbound Lanes");
+        setNorthLanesMenuItem.setText("Northbound Lanes");
+        setEastLanesMenuItem.setText("Eastbound Lanes");
+        setWestLanesMenuItem.setText("Westbound Lanes");
         setHProbMenuItem.setText("Horizontal Car Regularity");
         setVProbMenuItem.setText("Vertical Car Regularity");
         setLHD.setText("Left Hand Drive");
@@ -104,8 +110,10 @@ public class mainWindow extends javax.swing.JFrame {
         settingsMenu.add(setLHD);
         settingsMenu.add(setRHD);
         settingsMenu.add(new JSeparator());
-        settingsMenu.add(setHLanesMenuItem);
-        settingsMenu.add(setVLanesMenuItem);
+        settingsMenu.add(setNorthLanesMenuItem);
+        settingsMenu.add(setSouthLanesMenuItem);
+        settingsMenu.add(setWestLanesMenuItem);
+        settingsMenu.add(setEastLanesMenuItem);
         settingsMenu.add(new JSeparator());
         settingsMenu.add(setHProbMenuItem);
         settingsMenu.add(setVProbMenuItem);
@@ -121,19 +129,24 @@ public class mainWindow extends javax.swing.JFrame {
         // Construct Lower JPanel
         controlPanel = new JPanel();
         runSimulationButton = new JButton("Run");
-        stopSimulationButton = new JButton("Stop");
+        stopSimulationButton = new JButton("Pause");
+        resetSimulationButton = new JButton("Reset");
 
         controlPanel.add(BorderLayout.CENTER, runSimulationButton);
         controlPanel.add(BorderLayout.CENTER, stopSimulationButton);
+        controlPanel.add(BorderLayout.CENTER, resetSimulationButton);
         stopSimulationButton.setVisible(false);
         add(controlPanel, BorderLayout.SOUTH);
 
         //Add Event Handlers
         stopSimulationButton.addActionListener(new simulationToggle(this, simulation));
         runSimulationButton.addActionListener(new simulationToggle(this, simulation));
+        resetSimulationButton.addActionListener(new simulationReset(this, simulation));
         simRunMenuItem.addActionListener(new simulationToggle(this, simulation));
-        setHLanesMenuItem.addActionListener(new settingsHLanesListener(this));
-        setVLanesMenuItem.addActionListener(new settingsVLanesListener(this));
+        setNorthLanesMenuItem.addActionListener(new settingsLanesListener(this, simulation, Settings.TRAFFIC_WEST_NORTH, Settings.ROAD_SOUTH_NORTH));
+        setSouthLanesMenuItem.addActionListener(new settingsLanesListener(this, simulation, Settings.TRAFFIC_EAST_SOUTH, Settings.ROAD_SOUTH_NORTH));
+        setEastLanesMenuItem.addActionListener(new settingsLanesListener(this, simulation, Settings.TRAFFIC_EAST_SOUTH, Settings.ROAD_EAST_WEST));
+        setWestLanesMenuItem.addActionListener(new settingsLanesListener(this, simulation, Settings.TRAFFIC_WEST_NORTH, Settings.ROAD_EAST_WEST));
         setHProbMenuItem.addActionListener(new settingsHProbListener());
         setVProbMenuItem.addActionListener(new settingsVProbListener());
 
@@ -176,14 +189,35 @@ public class mainWindow extends javax.swing.JFrame {
         } else {
             try {
                 simulation.run();
-                simulation.multiLightCycle();
             } catch (InterruptedException ex) {
                 Logger.getLogger(simulationToggle.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
+}
 
+ /* ActionListener implementing class to toggle the simulation from running to stopped or vica-versa.
+ *
+ * @author Tristan Davey
+ */
+ class simulationReset implements ActionListener {
 
+     mainWindow window;
+     SimulationEnvironment simulation;
+
+    simulationReset(mainWindow window, SimulationEnvironment simulation) {
+        this.window = window;
+        this.simulation = simulation;
+    }
+
+    public void actionPerformed(ActionEvent e) {
+        try {
+            simulation.reset();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(simulationReset.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        window.toggleSimulation(false);
+    }
 }
 
  /**
@@ -191,23 +225,68 @@ public class mainWindow extends javax.swing.JFrame {
  *
  * @author Tristan Davey
  */
- class settingsHLanesListener implements ActionListener {
+ class settingsLanesListener implements ActionListener {
 
     mainWindow window;
+    SimulationEnvironment simulation;
+    Boolean trafficDirection;
+    Boolean roadOrientation;
 
-    settingsHLanesListener(mainWindow window) {
+    settingsLanesListener(mainWindow window, SimulationEnvironment simulation, Boolean trafficDirection, Boolean roadOrientation) {
         this.window = window;
+        this.simulation = simulation;
+        this.trafficDirection = trafficDirection;
+        this.roadOrientation = roadOrientation;
+
     }
 
     public void actionPerformed(ActionEvent e) {
-        String label = "Horizontal Lanes ("+Settings.H_LANE_BOUNDS[0]+"-"+Settings.H_LANE_BOUNDS[1]+"):";
-        Short value = Short.parseShort(JOptionPane.showInputDialog(null, label));
-        if((value < Settings.H_LANE_BOUNDS[0]) || (value > Settings.H_LANE_BOUNDS[1])) {
-            JOptionPane.showMessageDialog(null, "Enter a value between "+Settings.H_LANE_BOUNDS[0]+" and "+Settings.H_LANE_BOUNDS[1]);
-        } else {
-            //Settings.getSimSettings().setHLanes(value);
-            window.repaint();
+        short value = 0;
+        Boolean fieldComplete = false;
+        String message = null;
+        
+        while(fieldComplete != true) {
+            if(roadOrientation == Settings.ROAD_EAST_WEST) {
+                if(trafficDirection == Settings.TRAFFIC_EAST_SOUTH) {
+                    message = "Set Number of Eastbound Lanes ("+Settings.H_LANE_BOUNDS[0]+"-"+Settings.H_LANE_BOUNDS[1]+"):";
+                } else {
+                    message = "Set Number of Westbound Lanes ("+Settings.H_LANE_BOUNDS[0]+"-"+Settings.H_LANE_BOUNDS[1]+"):";
+                }
+                try {
+                    value = Short.parseShort(JOptionPane.showInputDialog(null, message));
+                } catch (NumberFormatException ex) {
+                    //Nothing was entered or cancel was hit
+                    fieldComplete = true;
+                }
+                if(fieldComplete == false) {
+                    if((value < Settings.H_LANE_BOUNDS[0]) || (value > Settings.H_LANE_BOUNDS[1])) {
+                        JOptionPane.showMessageDialog(null, "Enter a value between "+Settings.H_LANE_BOUNDS[0]+" and "+Settings.H_LANE_BOUNDS[1]);
+                    } else {
+                       fieldComplete = true;
+                    }
+                }
+            } else {
+                if(trafficDirection == Settings.TRAFFIC_EAST_SOUTH) {
+                    message = "Set Number of Southbound Lanes ("+Settings.V_LANE_BOUNDS[0]+"-"+Settings.V_LANE_BOUNDS[1]+"):";
+                } else {
+                    message = "Set Number of Northbound Lanes ("+Settings.V_LANE_BOUNDS[0]+"-"+Settings.V_LANE_BOUNDS[1]+"):";
+                }
+                try {
+                    value = Short.parseShort(JOptionPane.showInputDialog(null, message));
+                } catch (NumberFormatException ex) {
+                    //Nothing was entered or cancel was hit
+                    fieldComplete = true;
+                }
+                if(fieldComplete == false) {
+                    if((value < Settings.V_LANE_BOUNDS[0]) || (value > Settings.V_LANE_BOUNDS[1])) {
+                        JOptionPane.showMessageDialog(null, "Enter a value between "+Settings.V_LANE_BOUNDS[0]+" and "+Settings.V_LANE_BOUNDS[1]);
+                    } else {
+                       fieldComplete = true;
+                    }
+                }  
+            }
         }
+        
     }
 
 }

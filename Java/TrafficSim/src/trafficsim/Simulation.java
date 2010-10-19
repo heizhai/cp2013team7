@@ -78,7 +78,7 @@ class SimulationEnvironment {
 
     public void run() throws InterruptedException {
         frameTimer = new Timer();
-        this.modelIntersection.reset();
+        multiLightCycle();
         Settings.getSimSettings().setSimulationRunning(true);
         frameTimer.scheduleAtFixedRate(new simulationFrame(modelIntersection, window), 0, Settings.FRAME_LENGTH);
     }
@@ -86,6 +86,14 @@ class SimulationEnvironment {
     public void stop() throws InterruptedException {
         Settings.getSimSettings().setSimulationRunning(false);
         frameTimer.cancel();
+        lightMultiCyclesTimer.cancel();
+    }
+
+    public void reset() throws InterruptedException {
+        if(Settings.getSimSettings().getSimulationRunning() == true) {
+            frameTimer.cancel();
+            lightMultiCyclesTimer.cancel();
+        }
         modelIntersection.reset();
     }
 
@@ -117,7 +125,7 @@ class simulationFrame extends TimerTask {
 
         System.out.println(frameCount);
         // Generate New Cars
-        if(frameCount%Settings.CAR_FREQUENCY == 0 || frameCount == 1) {
+        if(frameCount%Settings.CAR_FREQUENCY == 0) {
             //Horizontal Road
             if(randGen.nextInt(100) < (Settings.getSimSettings().getHCarProbability()*100)) {
                 Car workingCar = null;
@@ -127,26 +135,30 @@ class simulationFrame extends TimerTask {
                 int lanePositionHWest = roadH.getRoadLength();
                 int lanePositionHEast = 0;
 
-                modelIntersection.gethRoadIntersection().getRoad().getLane(Settings.TRAFFIC_WEST_NORTH, randHWest).addCar(workingCar = new Car(lanePositionHWest));
+                if(this.trafficJam(modelIntersection.gethRoadIntersection().getRoad(), Settings.TRAFFIC_WEST_NORTH) == false) {
+                    modelIntersection.gethRoadIntersection().getRoad().getLane(Settings.TRAFFIC_WEST_NORTH, randHWest).addCar(workingCar = new Car(lanePositionHWest));
+                
+                    if(randGen.nextInt() < (Settings.getSimSettings().getTurnLeftProbability()*100)) {
+                        workingCar.setTurningLeft(true);
+                    }
 
-                if(randGen.nextInt() < (Settings.getSimSettings().getTurnLeftProbability()*100)) {
-                    workingCar.setTurningLeft(true);
-                }
-
-                if (randGen.nextInt() < (Settings.getSimSettings().getTurnRightProbability()*100)) {
-                    workingCar.setTurningRight(true);
+                    if (randGen.nextInt() < (Settings.getSimSettings().getTurnRightProbability()*100)) {
+                        workingCar.setTurningRight(true);
+                    }
                 }
 
                 workingCar = null;
 
-                modelIntersection.gethRoadIntersection().getRoad().getLane(Settings.TRAFFIC_EAST_SOUTH, randHEast).addCar(workingCar = new Car(lanePositionHEast));
+                if(this.trafficJam(modelIntersection.gethRoadIntersection().getRoad(), Settings.TRAFFIC_EAST_SOUTH) == false) {
+                    modelIntersection.gethRoadIntersection().getRoad().getLane(Settings.TRAFFIC_EAST_SOUTH, randHEast).addCar(workingCar = new Car(lanePositionHEast));
 
-                if(randGen.nextInt() < (Settings.getSimSettings().getTurnLeftProbability()*100)) {
-                    workingCar.setTurningLeft(true);
-                }
+                    if(randGen.nextInt() < (Settings.getSimSettings().getTurnLeftProbability()*100)) {
+                        workingCar.setTurningLeft(true);
+                    }
 
-                if (randGen.nextInt() < (Settings.getSimSettings().getTurnRightProbability()*100)) {
-                    workingCar.setTurningRight(true);
+                    if (randGen.nextInt() < (Settings.getSimSettings().getTurnRightProbability()*100)) {
+                        workingCar.setTurningRight(true);
+                    }
                 }
 
             }
@@ -160,26 +172,31 @@ class simulationFrame extends TimerTask {
                 int lanePositionVNorth = roadV.getRoadLength();
                 int lanePositionVSouth = 0;
 
-                modelIntersection.getvRoadIntersection().getRoad().getLane(Settings.TRAFFIC_WEST_NORTH, randVNorth).addCar(workingCar = new Car(lanePositionVNorth));
+                if(this.trafficJam(modelIntersection.getvRoadIntersection().getRoad(), Settings.TRAFFIC_WEST_NORTH) == false) {
+                    modelIntersection.getvRoadIntersection().getRoad().getLane(Settings.TRAFFIC_WEST_NORTH, randVNorth).addCar(workingCar = new Car(lanePositionVNorth));
 
-                if(randGen.nextInt() < (Settings.getSimSettings().getTurnLeftProbability()*100)) {
-                    workingCar.setTurningLeft(true);
-                }
+                    if(randGen.nextInt() < (Settings.getSimSettings().getTurnLeftProbability()*100)) {
+                        workingCar.setTurningLeft(true);
+                    }
 
-                if (randGen.nextInt() < (Settings.getSimSettings().getTurnRightProbability()*100)) {
-                    workingCar.setTurningRight(true);
+                    if (randGen.nextInt() < (Settings.getSimSettings().getTurnRightProbability()*100)) {
+                        workingCar.setTurningRight(true);
+                    }
                 }
 
                 workingCar = null;
 
-                modelIntersection.getvRoadIntersection().getRoad().getLane(Settings.TRAFFIC_EAST_SOUTH, randVSouth).addCar(workingCar = new Car(lanePositionVSouth));
-                
-                if(randGen.nextInt() < (Settings.getSimSettings().getTurnLeftProbability()*100)) {
-                    workingCar.setTurningLeft(true);
-                }
+                if(this.trafficJam(modelIntersection.getvRoadIntersection().getRoad(), Settings.TRAFFIC_EAST_SOUTH) == false) {
+                    modelIntersection.getvRoadIntersection().getRoad().getLane(Settings.TRAFFIC_EAST_SOUTH, randVSouth).addCar(workingCar = new Car(lanePositionVSouth));
 
-                if (randGen.nextInt() < (Settings.getSimSettings().getTurnRightProbability()*100)) {
-                    workingCar.setTurningRight(true);
+                    if(randGen.nextInt() < (Settings.getSimSettings().getTurnLeftProbability()*100)) {
+                        workingCar.setTurningLeft(true);
+                    }
+
+                    if (randGen.nextInt() < (Settings.getSimSettings().getTurnRightProbability()*100)) {
+                        workingCar.setTurningRight(true);
+                    }
+
                 }
 
             }
@@ -191,7 +208,7 @@ class simulationFrame extends TimerTask {
 
     }
 
-    public void carFrame(RoadIntersection roadIntersection,  RoadIntersection intersectingRoadIntersection) {
+    private void carFrame(RoadIntersection roadIntersection,  RoadIntersection intersectingRoadIntersection) {
 
        for (Lane l: roadIntersection.getRoad().getLanes(Settings.TRAFFIC_WEST_NORTH)) {
             for (Car c: l.getCars()) {
@@ -465,6 +482,31 @@ class simulationFrame extends TimerTask {
                     car.setStopped(false);
                 }
             }
+        }
+    }
+
+
+    private boolean trafficJam(Road road, Boolean trafficDirection) {
+        int noBlockedLanes = 0;
+
+        for(Lane l: road.getLanes(trafficDirection)) {
+            for(Car c: l.getCars()) {
+                if(trafficDirection == Settings.TRAFFIC_EAST_SOUTH) {
+                    if(c.getLanePosition() <= (1-Settings.TRAFFIC_JAM_THRESHOLD)*road.getRoadLength() && c.getStopped() == true) {
+                        noBlockedLanes++;
+                    }
+                } else {
+                    if(c.getLanePosition() >= Settings.TRAFFIC_JAM_THRESHOLD*road.getRoadLength() && c.getStopped() == true) {
+                        noBlockedLanes++;
+                    }
+                }
+            }
+        }
+
+        if(noBlockedLanes >= (int) (road.getNoLanes(trafficDirection)*Settings.TRAFFIC_JAM_LANES_JAMMED)) {
+            return true;
+        } else {
+            return false;
         }
     }
 

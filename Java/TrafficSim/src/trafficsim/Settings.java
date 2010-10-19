@@ -32,9 +32,10 @@ public class Settings {
     public static final int CAR_FREQUENCY = 48;
     public static final int[] LIGHT_CYCLE_BOUNDS = {1,10};
     public static final int LIGHT_CYCLE_TIME = 15000;
+    public static final double TRAFFIC_JAM_THRESHOLD = .8;
+    public static final double TRAFFIC_JAM_LANES_JAMMED = .5;
 
     public static final int DEFAULT_ROAD_LENGTH = 500;
-    public static final int DEFAULT_TRAFFIC_JAM_THRESHOLD = 6;
     public static final int DEFAULT_ROAD_SPEED = 1;
     public static final boolean DEFAULT_TRAFFIC_FLOW = TRAFFIC_FLOW_LEFT_HAND_TRAFFIC;
     
@@ -44,12 +45,12 @@ public class Settings {
     private short vSouthLanes = 4;
     private int vLaneLength = this.DEFAULT_ROAD_LENGTH;
     private int hLaneLength = this.DEFAULT_ROAD_LENGTH;
-    private int vRoadSpeed = this.DEFAULT_ROAD_SPEED;
+    private int vRoadSpeed = 4;//this.DEFAULT_ROAD_SPEED;
     private int hRoadSpeed = 2;//this.DEFAULT_ROAD_SPEED;
     private int vIntersectionCenter = 250;
     private int hIntersectionCenter = 250;
-    private double hCarProbability = .4;
-    private double vCarProbability = .4;
+    private double hCarProbability = .9;
+    private double vCarProbability = .9;
     private double turnLeftProbability = .40;
     private double turnRightProbability = .40;
     private double breakdownProbability = .01;
