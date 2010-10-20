@@ -1,5 +1,6 @@
 package trafficsim;
 
+import java.io.Serializable;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -7,7 +8,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  *
  * @author Tristan Davey
  */
-class Road {
+class Road  implements Serializable {
     private CopyOnWriteArrayList<Lane> eastSouthLanes = new CopyOnWriteArrayList<Lane>();
     private CopyOnWriteArrayList<Lane> westNorthLanes = new CopyOnWriteArrayList<Lane>();
     private int roadLength;

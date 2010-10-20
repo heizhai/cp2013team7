@@ -1,16 +1,12 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package trafficsim;
+import java.io.*;
 
 /**
  * Class which represents the Intersection in the simulation.
  *
  * @author Tristan Davey
  */
-public class Intersection {
+public class Intersection implements Serializable {
 
     private RoadIntersection vRoadIntersection;
     private RoadIntersection hRoadIntersection;

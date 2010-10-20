@@ -1,5 +1,6 @@
 package trafficsim;
 
+import java.io.Serializable;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -7,7 +8,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  *
  * @author Tristan Davey
  */
-public class Lane {
+public class Lane implements Serializable {
 
     private CopyOnWriteArrayList<Car> cars = new CopyOnWriteArrayList<Car>();
 

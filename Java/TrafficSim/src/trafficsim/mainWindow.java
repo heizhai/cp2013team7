@@ -3,11 +3,13 @@ package trafficsim;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JSeparator;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -30,8 +32,11 @@ public class mainWindow extends javax.swing.JFrame {
     private JMenu settingsMenu;
     
     //File Menu
-    private JMenuItem runMenuItem;
-    private JMenuItem runMultiMenuItem;
+    private JMenuItem mySQLConfMenuItem;
+    private JMenuItem openFileMenuItem;
+    private JMenuItem saveFileMenuItem;
+    private JMenuItem openMySQLMenuItem;
+    private JMenuItem saveMySQLMenuItem;
     private JCheckBoxMenuItem simRunMenuItem;
     private JMenuItem exitMenuItem;
 
@@ -66,6 +71,11 @@ public class mainWindow extends javax.swing.JFrame {
 
         //File Menu Initialisation
         simRunMenuItem = new JCheckBoxMenuItem();
+        mySQLConfMenuItem = new JMenuItem();
+        openFileMenuItem = new JMenuItem();
+        saveFileMenuItem = new JMenuItem();
+        openMySQLMenuItem = new JMenuItem();
+        saveMySQLMenuItem = new JMenuItem();
         exitMenuItem = new JMenuItem();
        
         //Settings Menu Initialisation
@@ -87,6 +97,11 @@ public class mainWindow extends javax.swing.JFrame {
 
         //Set File Menu Text
         simRunMenuItem.setText("Run Simulation");
+        mySQLConfMenuItem.setText("Configure Database Connection");
+        openFileMenuItem.setText("Open File");
+        saveFileMenuItem.setText("Save File");
+        openMySQLMenuItem.setText("Open from Database");
+        saveMySQLMenuItem.setText("Save to Database");
         exitMenuItem.setText("Exit");
 
         //Set Settings Menu Text
@@ -103,6 +118,14 @@ public class mainWindow extends javax.swing.JFrame {
         //Construct File Menu
         fileMenu.add(new JSeparator());
         fileMenu.add(simRunMenuItem);
+        fileMenu.add(new JSeparator());
+        fileMenu.add(mySQLConfMenuItem);
+        fileMenu.add(new JSeparator());
+        fileMenu.add(openFileMenuItem);
+        fileMenu.add(openMySQLMenuItem);
+        fileMenu.add(new JSeparator());
+        fileMenu.add(saveFileMenuItem);
+        fileMenu.add(saveMySQLMenuItem);
         fileMenu.add(new JSeparator());
         fileMenu.add(exitMenuItem);
 
@@ -139,6 +162,8 @@ public class mainWindow extends javax.swing.JFrame {
         add(controlPanel, BorderLayout.SOUTH);
 
         //Add Event Handlers
+        openFileMenuItem.addActionListener(new fileOpenListener(simulation, this));
+        saveFileMenuItem.addActionListener(new fileSaveListener(simulation, this));
         stopSimulationButton.addActionListener(new simulationToggle(this, simulation));
         runSimulationButton.addActionListener(new simulationToggle(this, simulation));
         resetSimulationButton.addActionListener(new simulationReset(this, simulation));
@@ -159,6 +184,18 @@ public class mainWindow extends javax.swing.JFrame {
         runSimulationButton.setVisible(!condition);
         stopSimulationButton.setVisible(condition);
         settingsMenu.setEnabled(!condition);
+    }
+
+    public void redrawSimulation() {
+        this.simGUI.repaint();
+    }
+
+    public void refreshSimulationReference(Intersection modelIntersection) {
+        //There seems to be a bug or issue where simGUI uses the old modelIntersection object reference unless we remove it from the window, recreate and readd.
+        getContentPane().remove(this.simGUI);
+        this.simGUI = new SimulationGUI(modelIntersection);
+        getContentPane().add(BorderLayout.CENTER, simGUI);
+        this.simGUI.repaint();
     }
 
 }
@@ -217,6 +254,7 @@ public class mainWindow extends javax.swing.JFrame {
             Logger.getLogger(simulationReset.class.getName()).log(Level.SEVERE, null, ex);
         }
         window.toggleSimulation(false);
+        window.redrawSimulation();
     }
 }
 
@@ -262,6 +300,11 @@ public class mainWindow extends javax.swing.JFrame {
                     if((value < Settings.H_LANE_BOUNDS[0]) || (value > Settings.H_LANE_BOUNDS[1])) {
                         JOptionPane.showMessageDialog(null, "Enter a value between "+Settings.H_LANE_BOUNDS[0]+" and "+Settings.H_LANE_BOUNDS[1]);
                     } else {
+                       if(trafficDirection == Settings.TRAFFIC_EAST_SOUTH) {
+                           Settings.getSimSettings().setHEastLanes(value);
+                       } else {
+                           Settings.getSimSettings().setHWestLanes(value);
+                       }
                        fieldComplete = true;
                     }
                 }
@@ -281,6 +324,11 @@ public class mainWindow extends javax.swing.JFrame {
                     if((value < Settings.V_LANE_BOUNDS[0]) || (value > Settings.V_LANE_BOUNDS[1])) {
                         JOptionPane.showMessageDialog(null, "Enter a value between "+Settings.V_LANE_BOUNDS[0]+" and "+Settings.V_LANE_BOUNDS[1]);
                     } else {
+                       if(trafficDirection == Settings.TRAFFIC_EAST_SOUTH) {
+                           Settings.getSimSettings().setVSouthLanes(value);
+                       } else {
+                           Settings.getSimSettings().setVNorthLanes(value);
+                       }
                        fieldComplete = true;
                     }
                 }  
@@ -291,34 +339,9 @@ public class mainWindow extends javax.swing.JFrame {
 
 }
 
- /**
- * ActionListener implementing class which handles the pressing of the "Set Vertical Lanes" button.
- *
- * @author Tristan Davey
- */
- class settingsVLanesListener implements ActionListener {
-
-    mainWindow window;
-
-    settingsVLanesListener(mainWindow window) {
-        this.window = window;
-    }
-
-    public void actionPerformed(ActionEvent e) {
-        String label = "Vertical Lanes ("+Settings.V_LANE_BOUNDS[0]+"-"+Settings.V_LANE_BOUNDS[1]+"):";
-        Short value = Short.parseShort(JOptionPane.showInputDialog(null, label));
-        if((value < Settings.V_LANE_BOUNDS[0]) || (value > Settings.V_LANE_BOUNDS[1])) {
-            JOptionPane.showMessageDialog(null, "Enter a value between "+Settings.V_LANE_BOUNDS[0]+" and "+Settings.V_LANE_BOUNDS[1]);
-        } else {
-            //Settings.getSimSettings().setVLanes(value);
-            window.repaint();
-        }
-    }
-
-}
 
  /**
- * ActionListener implementing class which handles the pressing of the "Horizontal Car " button.
+ * ActionListener implementing class which handles the pressing of the "Horizontal Car Regularity" button.
  *
  * @author Tristan Davey
  */
@@ -353,4 +376,115 @@ public class mainWindow extends javax.swing.JFrame {
         }
     }
 
+}
+
+  /**
+ * ActionListener implementing class which handles the pressing of the "Configure Database Connection" button.
+ *
+ * @author Tristan Davey
+ */
+ class mysqlConSettingsListener implements ActionListener {
+
+    public void actionPerformed(ActionEvent e) {
+
+    }
+
+}
+
+  /**
+ * ActionListener implementing class which handles the pressing of the "Save to Database" button.
+ *
+ * @author Tristan Davey
+ */
+ class mysqlSaveListener implements ActionListener {
+
+    public void actionPerformed(ActionEvent e) {
+
+    }
+
+}
+
+  /**
+ * ActionListener implementing class which handles the pressing of the "Open from Database" button.
+ *
+ * @author Tristan Davey
+ */
+ class mysqlOpenListener implements ActionListener {
+
+    public void actionPerformed(ActionEvent e) {
+
+    }
+
+}
+
+ /**
+ * ActionListener implementing class which handles the pressing of the "Save File" button.
+ *
+ * @author Tristan Davey
+ */
+ class fileSaveListener implements ActionListener {
+
+    final JFileChooser fc = new JFileChooser();
+    private mainWindow window = null;
+    private SimulationEnvironment simulation = null;
+
+    fileSaveListener(SimulationEnvironment simulation, mainWindow window) {
+        this.window = window;
+        this.simulation = simulation;
+        fc.addChoosableFileFilter(new simFilter());
+    }
+
+    public void actionPerformed(ActionEvent e) {
+        int returnVal = fc.showSaveDialog(window);
+
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            File file = fc.getSelectedFile();
+            simulation.fileOutput(file);
+        }
+
+    }
+
+}
+
+ /**
+ * ActionListener implementing class which handles the pressing of the "Open File" button.
+ *
+ * @author Tristan Davey
+ */
+ class fileOpenListener implements ActionListener {
+
+    final JFileChooser fc = new JFileChooser();
+    private mainWindow window = null;
+    private SimulationEnvironment simulation = null;
+
+    fileOpenListener(SimulationEnvironment simulation, mainWindow window) {
+        this.window = window;
+        this.simulation = simulation;
+        fc.addChoosableFileFilter(new simFilter());
+    }
+
+    public void actionPerformed(ActionEvent e) {
+        int returnVal = fc.showOpenDialog(window);
+
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            File file = fc.getSelectedFile();
+            simulation.fileInput(file);
+        }
+    }
+}
+
+class simFilter extends javax.swing.filechooser.FileFilter {
+
+    public boolean accept(File file) {
+        if (file.isDirectory()) {
+            return true;
+        } else {
+            String filename = file.getName();
+            return filename.endsWith(".sim");
+        }
+    }
+
+    public String getDescription() {
+        return "*.sim";
+    }
 }

@@ -3,13 +3,15 @@ package trafficsim;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.io.*;
+import java.util.Map;
 
 /**
  * Class which initialises and begins the Traffic Simulation Program
  *
  * @author Tristan Davey
  */
-public class Simulation {
+public class Simulation {Intersection modelIntersection = new Intersection();
 
     /**
      * Program Constructor
@@ -18,18 +20,10 @@ public class Simulation {
      */
     public static void main(String[] args) throws InterruptedException {
 
-        Intersection modelIntersection = new Intersection();
-        SimulationEnvironment simulation = null;
-        mainWindow window = null;
-        simulation = new SimulationEnvironment(modelIntersection, window);
-        window = new mainWindow(modelIntersection, simulation, "Traffic Intersection Simulation");
-        simulation.setWindow(window);
-
-        
-        window.setSize(700, 700);
-        window.setVisible(true);
+        SimulationEnvironment simulation = new SimulationEnvironment();
 
     }
+
 }
 
 /**
@@ -44,11 +38,14 @@ class SimulationEnvironment {
     private Timer frameTimer;
     private Timer lightTimer;
     private Timer lightMultiCyclesTimer;
+    private MySQLConnection mysql;
 
 
-    SimulationEnvironment(Intersection modelIntersection, mainWindow window) {
-        this.modelIntersection = modelIntersection;
-        this.window = window;
+    SimulationEnvironment() {
+        this.modelIntersection = new Intersection();
+        this.window = new mainWindow(modelIntersection, this, "Traffic Intersection Simulation");
+        this.window.setSize(700, 700);
+        this.window.setVisible(true);
     }
 
     /**
@@ -99,6 +96,44 @@ class SimulationEnvironment {
 
     void setWindow(mainWindow window) {
         this.window = window;
+    }
+
+    void fileOutput(File file) {
+        try {
+            FileOutputStream fileStream = new FileOutputStream(file);
+            ObjectOutputStream outStream = new ObjectOutputStream(fileStream);
+
+            outStream.writeObject(Settings.getSimSettings().outputSettings());
+            outStream.writeObject(modelIntersection);
+            
+            outStream.close();
+            fileStream.close();
+            
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    void fileInput(File file) {
+        try {
+            this.reset();
+
+            FileInputStream fileStream = new FileInputStream(file);
+            ObjectInputStream inputStream = new ObjectInputStream(fileStream);
+
+            Object inputSettings = inputStream.readObject();
+            Object inputIntersection = inputStream.readObject();
+
+            Settings.getSimSettings().inputSettings((Map) inputSettings);
+            modelIntersection = (Intersection) inputIntersection;
+
+            inputStream.close();
+            fileStream.close();
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        window.refreshSimulationReference(modelIntersection);
     }
 
 }

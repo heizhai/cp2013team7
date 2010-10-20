@@ -1,5 +1,6 @@
 package trafficsim;
 
+import java.io.Serializable;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -7,8 +8,7 @@ import java.util.TimerTask;
  *
  * @author Tristan Davey
  */
-class Car {
-
+class Car implements Serializable {
 
     private int lanePosition;
     private Boolean stopped = false;

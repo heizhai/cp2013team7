@@ -1,11 +1,13 @@
 package trafficsim;
 
+import java.io.Serializable;
+
 /**
  * Class which handles the elements of an intersection which are explicitly associated with the road, rather than the intersection itself.
  *
  * @author Tristan Davey
  */
-public class RoadIntersection {
+public class RoadIntersection implements Serializable {
 
     static final short RED_LIGHT = 0;
     static final short YELLOW_LIGHT = 1;

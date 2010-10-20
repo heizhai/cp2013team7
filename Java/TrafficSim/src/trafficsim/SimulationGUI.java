@@ -17,6 +17,7 @@ public class SimulationGUI extends JPanel {
 
     @SuppressWarnings("empty-statement")
     public void paintComponent(Graphics g) {
+        System.out.println("Painting...");
 
         //Setup Background
         g.setColor(Color.green);
@@ -52,8 +53,6 @@ public class SimulationGUI extends JPanel {
         g.setColor(Color.BLACK);
         g.fillRect( hRoadX, hRoadY, Settings.getSimSettings().gethLaneLength(), hRoadWidth);
         g.fillRect( vRoadX, vRoadY, vRoadWidth, Settings.getSimSettings().getvLaneLength());
-
-        System.out.println("vRoadX input:"+vRoadX);
 
         //Render Horizontal Road Cars
         renderCars(model.gethRoadIntersection().getRoad(), g, hRoadX, hRoadY, Settings.ROAD_EAST_WEST, Settings.getSimSettings().getTrafficFlow());
@@ -404,14 +403,14 @@ public class SimulationGUI extends JPanel {
         // </editor-fold>
 
         g.setColor(Color.LIGHT_GRAY);
-        //g.fillRect(0, 0, hRoadX, this.getHeight());
-        //g.fillRect((hRoadX+Settings.getSimSettings().gethLaneLength()), 0, this.getWidth(), this.getHeight());
-        //g.fillRect(0, 0, this.getWidth(), vRoadY);
-        //g.fillRect(0, (vRoadY+Settings.getSimSettings().gethLaneLength()), this.getWidth(), this.getHeight());
+        g.fillRect(0, 0, hRoadX, this.getHeight());
+        g.fillRect((hRoadX+Settings.getSimSettings().gethLaneLength()), 0, this.getWidth(), this.getHeight());
+        g.fillRect(0, 0, this.getWidth(), vRoadY);
+        g.fillRect(0, (vRoadY+Settings.getSimSettings().gethLaneLength()), this.getWidth(), this.getHeight());
     }
 
     private void renderCars(Road renderRoad, Graphics g, int roadX, int roadY, Boolean roadOrient, Boolean trafficFlowDirection) {
-
+        System.out.println("renderCars Called");
         g.setColor(Color.WHITE);
         int lNum = 0;
         int rectW, rectH, rectX, rectY, lanesXEastSouth, lanesYEastSouth, lanesXWestNorth, lanesYWestNorth;
@@ -461,6 +460,7 @@ public class SimulationGUI extends JPanel {
                     rectY = lanesYEastSouth+c.getLanePosition();
                 }
                 g.fillRect(rectX, rectY, rectW, rectH);
+                System.out.println("EAST/WEST lanePosition: "+c.getLanePosition());
             }
         }
 
@@ -477,6 +477,7 @@ public class SimulationGUI extends JPanel {
                     rectY = lanesYWestNorth+c.getLanePosition();
                 }
                 g.fillRect(rectX, rectY, rectW, rectH);
+                System.out.println("NORTH/SOUTH lanePosition: "+c.getLanePosition());
             }
         }
     }
