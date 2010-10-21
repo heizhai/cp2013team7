@@ -112,6 +112,7 @@ public class mainWindow extends javax.swing.JFrame {
         setHProbMenuItem.setText("Horizontal Car Regularity");
         setVProbMenuItem.setText("Vertical Car Regularity");
         setLHD.setText("Left Hand Drive");
+        setLHD.setSelected(true);
         setRHD.setText("Right Hand Drive");
 
 
@@ -168,6 +169,8 @@ public class mainWindow extends javax.swing.JFrame {
         runSimulationButton.addActionListener(new simulationToggle(this, simulation));
         resetSimulationButton.addActionListener(new simulationReset(this, simulation));
         simRunMenuItem.addActionListener(new simulationToggle(this, simulation));
+        setLHD.addActionListener(new setTrafficFlowListener(Settings.TRAFFIC_FLOW_LEFT_HAND_TRAFFIC, setLHD, setRHD, simGUI));
+        setRHD.addActionListener(new setTrafficFlowListener(Settings.TRAFFIC_FLOW_RIGHT_HAND_TRAFFIC, setLHD, setRHD, simGUI));
         setNorthLanesMenuItem.addActionListener(new settingsLanesListener(this, simulation, Settings.TRAFFIC_WEST_NORTH, Settings.ROAD_SOUTH_NORTH));
         setSouthLanesMenuItem.addActionListener(new settingsLanesListener(this, simulation, Settings.TRAFFIC_EAST_SOUTH, Settings.ROAD_SOUTH_NORTH));
         setEastLanesMenuItem.addActionListener(new settingsLanesListener(this, simulation, Settings.TRAFFIC_EAST_SOUTH, Settings.ROAD_EAST_WEST));
@@ -184,6 +187,11 @@ public class mainWindow extends javax.swing.JFrame {
         runSimulationButton.setVisible(!condition);
         stopSimulationButton.setVisible(condition);
         settingsMenu.setEnabled(!condition);
+        mySQLConfMenuItem.setEnabled(!condition);
+        openFileMenuItem.setEnabled(!condition);
+        openMySQLMenuItem.setEnabled(!condition);
+        saveFileMenuItem.setEnabled(!condition);
+        saveMySQLMenuItem.setEnabled(!condition);
     }
 
     public void redrawSimulation() {
@@ -334,6 +342,8 @@ public class mainWindow extends javax.swing.JFrame {
                 }  
             }
         }
+
+        window.redrawSimulation();
         
     }
 
@@ -405,7 +415,7 @@ public class mainWindow extends javax.swing.JFrame {
 }
 
   /**
- * ActionListener implementing class which handles the pressing of the "Open from Database" button.
+ * ActionListener implementing class which handles the pressing of the "Save to Database" button.
  *
  * @author Tristan Davey
  */
@@ -413,6 +423,39 @@ public class mainWindow extends javax.swing.JFrame {
 
     public void actionPerformed(ActionEvent e) {
 
+    }
+
+}
+
+  /**
+ * ActionListener implementing class which handles the pressing of the "Open from Database" button.
+ *
+ * @author Tristan Davey
+ */
+ class setTrafficFlowListener implements ActionListener {
+
+     Boolean trafficFlow;
+     JCheckBoxMenuItem leftHandDriveMenuItem;
+     JCheckBoxMenuItem rightHandDriveMenuItem;
+     SimulationGUI simGUI;
+     
+     setTrafficFlowListener(Boolean trafficFlowValue, JCheckBoxMenuItem leftHandDriveMenuItem,  JCheckBoxMenuItem rightHandDriveMenuItem, SimulationGUI simGUI) {
+         this.trafficFlow = trafficFlowValue;
+         this.leftHandDriveMenuItem = leftHandDriveMenuItem;
+         this.rightHandDriveMenuItem = rightHandDriveMenuItem;
+         this.simGUI = simGUI;
+     }
+
+    public void actionPerformed(ActionEvent e) {
+        Settings.getSimSettings().setTrafficFlow(this.trafficFlow);
+        if(this.trafficFlow == Settings.TRAFFIC_FLOW_LEFT_HAND_TRAFFIC) {
+            this.leftHandDriveMenuItem.setSelected(true);
+            this.rightHandDriveMenuItem.setSelected(false);
+        } else {
+            this.leftHandDriveMenuItem.setSelected(false);
+            this.rightHandDriveMenuItem.setSelected(true);
+        }
+        simGUI.repaint();
     }
 
 }
