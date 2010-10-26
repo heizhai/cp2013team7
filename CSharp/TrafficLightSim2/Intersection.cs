@@ -22,12 +22,14 @@ namespace TrafficLightSim2
 
         public Intersection(SerializationInfo info, StreamingContext ctxt)
         {
-            this.vRoadIntersection = (RoadIntersection)info.GetValue("vRoadIntersection", typeof(Intersection));
+            this.vRoadIntersection = (RoadIntersection)info.GetValue("vRoadIntersection", typeof(RoadIntersection));
+            this.hRoadIntersection = (RoadIntersection)info.GetValue("hRoadIntersection", typeof(RoadIntersection));
         }
 
         public void GetObjectData(SerializationInfo info, StreamingContext ctxt)
         {
             info.AddValue("vRoadIntersection", this.vRoadIntersection);
+            info.AddValue("hRoadIntersection", this.hRoadIntersection);
         }
 
         public RoadIntersection getvRoadIntersection()

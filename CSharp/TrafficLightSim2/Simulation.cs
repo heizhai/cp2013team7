@@ -140,16 +140,12 @@ namespace TrafficLightSim2
         {
             try
             {
-                Stream outStream = File.Open(outputFile, FileMode.Create);
-                BinaryFormatter bFormatter = new BinaryFormatter();
-                bFormatter.Serialize(outStream, Settings.getSimSettings().outputSettings());
-                bFormatter.Serialize(outStream, modelIntersection);
-                outStream.Close();
-
-             /*   Stream stream = File.Open(filename, FileMode.Create);
-                BinaryFormatter bFormatter = new BinaryFormatter();
-                bFormatter.Serialize(stream, objectToSerialize);
-                stream.Close();*/
+                Intersection writeData = modelIntersection;
+                FileStream writeStream = new FileStream(outputFile, FileMode.Create);
+                BinaryFormatter formatter = new BinaryFormatter();
+           //     formatter.Serialize(writeStream, Settings.getSimSettings().outputSettings());
+                formatter.Serialize(writeStream, writeData);
+                writeStream.Close();
             }
             catch (Exception ex)
             {
@@ -162,21 +158,17 @@ namespace TrafficLightSim2
               try
               {
                   this.reset();
-                  Intersection inputIntersection;
-                  Stream inputStream = File.Open(inputFile, FileMode.Open);
-                  BinaryFormatter bFormatter = new BinaryFormatter();
-                  inputIntersection = (Intersection)bFormatter.Deserialize(inputStream);
-                  
-
-                //  Settings.getSimSettings().inputSettings((Hashtable)inputSettings);
-                  modelIntersection = (Intersection)inputIntersection;
-                  inputStream.Close();
+                  FileStream readStream = new FileStream(inputFile, FileMode.Open);
+                  BinaryFormatter formatter = new BinaryFormatter();
+                  Intersection readData = (Intersection)formatter.Deserialize(readStream);
+                  readStream.Close();
+                  modelIntersection = readData;
               }
               catch (Exception ex)
               {
                   MessageBox.Show(ex.StackTrace);
               }
-              window.refreshSimulationReference(modelIntersection);
+              window.refreshSimulationReference(modelIntersection, this);
           }
     }
 

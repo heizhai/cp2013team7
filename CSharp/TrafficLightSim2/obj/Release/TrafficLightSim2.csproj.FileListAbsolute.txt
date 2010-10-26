@@ -32,7 +32,6 @@ C:\Users\Aiden\Desktop\csharp\TrafficLightSim2\obj\Release\TrafficLightSim2.main
 C:\Users\Aiden\Desktop\csharp\TrafficLightSim2\obj\Release\TrafficLightSim2.Properties.Resources.resources
 C:\Users\Aiden\Desktop\csharp\TrafficLightSim2\obj\Release\TrafficLightSim2.setHLanes.resources
 C:\Users\Aiden\Desktop\csharp\TrafficLightSim2\obj\Release\TrafficLightSim2.setHReg.resources
-C:\Users\Aiden\Desktop\csharp\TrafficLightSim2\obj\Release\TrafficLightSim2.setMultiCycle.resources
 C:\Users\Aiden\Desktop\csharp\TrafficLightSim2\obj\Release\TrafficLightSim2.setVLanes.resources
 C:\Users\Aiden\Desktop\csharp\TrafficLightSim2\obj\Release\TrafficLightSim2.setVReg.resources
 C:\Users\Aiden\Desktop\csharp\TrafficLightSim2\obj\Release\TrafficLightSim2.csproj.GenerateResource.Cache

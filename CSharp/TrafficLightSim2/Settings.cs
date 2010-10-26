@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Collections;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace TrafficLightSim2
 {
-    [Serializable]
-    public class Settings
+    [Serializable()]
+    public class Settings : ISerializable
     {
         //Singleton Instance
         private static Settings simulationSettings = null;
@@ -75,15 +77,172 @@ namespace TrafficLightSim2
             //Prevents Instantiation
         }
 
-        public void inputSettings(Hashtable inputSettings)
+        protected Settings(SerializationInfo info, StreamingContext ctxt)
         {
+            this.hWestLanes = (short)info.GetValue("hWestLanes", typeof(short));
+            this.hEastLanes = (short)info.GetValue("hEastLanes", typeof(short));
+            this.vNorthLanes = (short)info.GetValue("vNorthLanes", typeof(short));
+            this.vSouthLanes = (short)info.GetValue("vSouthLanes", typeof(short));
+            this.vLaneLength = (int)info.GetValue("vLaneLength", typeof(int));
+            this.hLaneLength = (int)info.GetValue("hLaneLength", typeof(int));
+            this.hRoadSpeed = (int)info.GetValue("hRoadSpeed", typeof(int));
+            this.vRoadSpeed = (int)info.GetValue("vRoadSpeed", typeof(int));
+            this.vIntersectionCenter = (int)info.GetValue("vIntersectionCenter", typeof(int));
+            this.hIntersectionCenter = (int)info.GetValue("hIntersectionCenter", typeof(int));
+            this.hCarProbability = (double)info.GetValue("hCarProbability", typeof(double));
+            this.vCarProbability = (double)info.GetValue("vCarProbability", typeof(double));
+            this.turnLeftProbability = (double)info.GetValue("turnLeftProbability", typeof(double));
+            this.turnRightProbability = (double)info.GetValue("turnRightProbability", typeof(double));
+            this.breakdownProbability = (double)info.GetValue("breakdownProbability", typeof(double));
+            this.breakdownTime = (int)info.GetValue("breakdownTime", typeof(int));
+            this.trafficFlow = (bool)info.GetValue("trafficFlow", typeof(bool));
 
         }
 
         public Hashtable outputSettings()
         {
             Hashtable outputSettings = new Hashtable();
+            if (getHWestLanes() != DEFAULT_LANE_NUMBER)
+            {
+                outputSettings.Add("hWestLanes", getHWestLanes());
+            }
+            if (getHEastLanes() != DEFAULT_LANE_NUMBER)
+            {
+                outputSettings.Add("hEastLanes", getHEastLanes());
+            }
+            if (getVNorthLanes() != DEFAULT_LANE_NUMBER)
+            {
+                outputSettings.Add("vNorthLanes", getVNorthLanes());
+            }
+            if (getVSouthLanes() != DEFAULT_LANE_NUMBER)
+            {
+                outputSettings.Add("vSouthLanes", getVSouthLanes());
+            }
+            if (getvLaneLength() != DEFAULT_ROAD_LENGTH)
+            {
+                outputSettings.Add("vLaneLength", getvLaneLength());
+            }
+            if (gethLaneLength() != DEFAULT_ROAD_LENGTH)
+            {
+                outputSettings.Add("hLaneLength", getVSouthLanes());
+            }
+            if (getvRoadSpeed() != DEFAULT_ROAD_SPEED)
+            {
+                outputSettings.Add("vRoadSpeed", getvRoadSpeed());
+            }
+            if (gethRoadSpeed() != DEFAULT_ROAD_SPEED)
+            {
+                outputSettings.Add("hRoadSpeed", gethRoadSpeed());
+            }
+            if (gethIntersectionCenter() != DEFAULT_ROAD_CENTER)
+            {
+                outputSettings.Add("hIntersectionCenter", gethIntersectionCenter());
+            }
+            if (getvIntersectionCenter() != DEFAULT_ROAD_CENTER)
+            {
+                outputSettings.Add("vIntersectionCenter", getvIntersectionCenter());
+            }
+            if (getHCarProbability() != DEFAULT_CAR_PROBABILITY)
+            {
+                outputSettings.Add("hCarProbability", getHCarProbability());
+            }
+            if (getVCarProbability() != DEFAULT_CAR_PROBABILITY)
+            {
+                outputSettings.Add("vCarProbability", getVCarProbability());
+            }
+            if (getTurnLeftProbability() != DEFAULT_CAR_PROBABILITY)
+            {
+                outputSettings.Add("turnLeftProbability", getTurnLeftProbability());
+            }
+            if (getTurnRightProbability() != DEFAULT_CAR_PROBABILITY)
+            {
+                outputSettings.Add("turnRightProbability", getTurnRightProbability());
+            }
+            if (getBreakdownProbability() != DEFAULT_CAR_PROBABILITY)
+            {
+                outputSettings.Add("breakdownProbability", getBreakdownProbability());
+            }
+            if (getBreakdownTime() != DEFAULT_BREAKDOWN_TIME)
+            {
+                outputSettings.Add("breakdownTime", getBreakdownTime());
+            }
+            if (getTrafficFlow() != TRAFFIC_FLOW_LEFT_HAND_TRAFFIC)
+            {
+                outputSettings.Add("trafficFlow", getTrafficFlow());
+            }
             return outputSettings;
+        }
+
+        public void GetObjectData(SerializationInfo info, StreamingContext ctxt)
+        {
+            if (getHWestLanes() != DEFAULT_LANE_NUMBER)
+            {
+                info.AddValue("hWestLanes", this.hWestLanes);
+            }
+            if (getHEastLanes() != DEFAULT_LANE_NUMBER)
+            {
+                info.AddValue("hEastLanes", this.hEastLanes);
+            }
+            if (getVNorthLanes() != DEFAULT_LANE_NUMBER)
+            {
+                info.AddValue("vNorthLanes", this.vNorthLanes);
+            }
+            if (getVSouthLanes() != DEFAULT_LANE_NUMBER)
+            {
+                info.AddValue("vSouthLanes", this.vSouthLanes);
+            }
+            if (getvLaneLength() != DEFAULT_ROAD_LENGTH)
+            {
+                info.AddValue("vLaneLength", this.vLaneLength);
+            }
+            if (gethLaneLength() != DEFAULT_ROAD_LENGTH)
+            {
+                info.AddValue("hLaneLength", this.hLaneLength);
+            }
+            if (getvRoadSpeed() != DEFAULT_ROAD_SPEED)
+            {
+                info.AddValue("vRoadSpeed", this.vRoadSpeed);
+            }
+            if (gethRoadSpeed() != DEFAULT_ROAD_SPEED)
+            {
+                info.AddValue("hRoadSpeed", this.hRoadSpeed);
+            }
+            if (gethIntersectionCenter() != DEFAULT_ROAD_CENTER)
+            {
+                info.AddValue("hIntersectionCenter", this.hIntersectionCenter);
+            }
+            if (getvIntersectionCenter() != DEFAULT_ROAD_CENTER)
+            {
+                info.AddValue("vIntersectionCenter", this.vIntersectionCenter);
+            }
+            if (getHCarProbability() != DEFAULT_CAR_PROBABILITY)
+            {
+                info.AddValue("hCarProbability", this.hCarProbability);
+            }
+            if (getVCarProbability() != DEFAULT_CAR_PROBABILITY)
+            {
+                info.AddValue("vCarProbability", this.vCarProbability);
+            }
+            if (getTurnLeftProbability() != DEFAULT_CAR_PROBABILITY)
+            {
+                info.AddValue("turnLeftProbability", this.turnLeftProbability);
+            }
+            if (getTurnRightProbability() != DEFAULT_CAR_PROBABILITY)
+            {
+                info.AddValue("turnRightProbability", this.turnRightProbability);
+            }
+            if (getBreakdownProbability() != DEFAULT_CAR_PROBABILITY)
+            {
+                info.AddValue("breakdownProbability", this.breakdownProbability);
+            }
+            if (getBreakdownTime() != DEFAULT_BREAKDOWN_TIME)
+            {
+                info.AddValue("breakdownTime", this.breakdownTime);
+            }
+            if (getTrafficFlow() != TRAFFIC_FLOW_LEFT_HAND_TRAFFIC)
+            {
+                info.AddValue("trafficFlow", this.trafficFlow);
+            }
         }
 
         public static Settings getSimSettings()

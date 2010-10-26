@@ -148,27 +148,6 @@ namespace TrafficLightSim2
             {
                 MessageBox.Show("You hit cancel or closed the dialog.");
             }
-
-            /*
-            SaveFileDialog DialogSave = new SaveFileDialog();
-            DialogSave.DefaultExt = "txt";
-            DialogSave.Filter = "Text file (*.txt)|*.txt|XML file (*.xml)|*.xml|All files (*.*)|*.*";
-            DialogSave.AddExtension = true;
-            DialogSave.RestoreDirectory = true;
-            DialogSave.Title = "Where do you want to save the file?";
-            DialogSave.InitialDirectory = @"C:/Users/";
-            if (DialogSave.ShowDialog() == DialogResult.OK)
-            {
-                MessageBox.Show("You selected the file: " + DialogSave.FileName);
-                string file = DialogSave.FileName;
-                simulation.fileOutput(file);
-            }
-            else
-            {
-                MessageBox.Show("You hit cancel or closed the dialog.");
-            }
-            DialogSave.Dispose();
-            DialogSave = null;*/
         }
 
         private void OnClickExit(object sender, System.EventArgs e)
@@ -217,7 +196,6 @@ namespace TrafficLightSim2
                 resetSimulationButton.Show();
                 runSimulationButton.Show();
                 Settings.automate = false;
-
             }
             else
             {
@@ -230,14 +208,16 @@ namespace TrafficLightSim2
 
         }
 
-        public void refreshSimulationReference(Intersection modelIntersection)
+        public void refreshSimulationReference(Intersection modelIntersection, SimulationEnvironment sim)
         {/*
             //There seems to be a bug or issue where simGUI uses the old modelIntersection object reference unless we remove it from the window, recreate and readd.
             getContentPane().remove(this.simGUI);
             this.simGUI = new SimulationGUI(modelIntersection);
             getContentPane().add(BorderLayout.CENTER, simGUI);
             this.simGUI.repaint();
-          * */
+          */
+            this.simulation = sim;
+            this.model = modelIntersection;
         }
 
         private void ClearColor(PaintEventArgs e)

@@ -32,11 +32,17 @@ namespace TrafficLightSim2
         public Road(SerializationInfo info, StreamingContext ctxt)
        {
           this.eastSouthLanes = (List<Lane>)info.GetValue("eastSouthLanes", typeof(List<Lane>));
+          this.westNorthLanes = (List<Lane>)info.GetValue("westNorthLanes", typeof(List<Lane>));
+          this.roadLength = (int)info.GetValue("roadLength", typeof(int));
+          this.roadSpeed = (int)info.GetValue("roadSpeed", typeof(int));
        }
 
        public void GetObjectData(SerializationInfo info, StreamingContext ctxt)
        {
           info.AddValue("eastSouthLanes", this.eastSouthLanes);
+          info.AddValue("westNorthLanes", this.westNorthLanes);
+          info.AddValue("roadLength", this.roadLength);
+          info.AddValue("roadSpeed", this.roadSpeed);
        }
 
         public List<Lane> getNeighbouringLanes(Lane lane, bool trafficDirection)

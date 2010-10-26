@@ -26,11 +26,23 @@ namespace TrafficLightSim2
         public Car(SerializationInfo info, StreamingContext ctxt)
         {
             this.lanePosition = (int)info.GetValue("lanePosition", typeof(int));
+            this.stopped = (bool)info.GetValue("stopped", typeof(bool));
+            this.lightStopped = (bool)info.GetValue("lightStopped", typeof(bool));
+            this.brokenDown = (bool)info.GetValue("brokenDown", typeof(bool));
+            this.turningLeft = (bool)info.GetValue("turningLeft", typeof(bool));
+            this.turningRight = (bool)info.GetValue("turningRight", typeof(bool));
+            this.breakdownTimer = (System.Windows.Forms.Timer)info.GetValue("breakdownTimer", typeof(System.Windows.Forms.Timer));
         }
 
         public void GetObjectData(SerializationInfo info, StreamingContext ctxt)
         {
             info.AddValue("lanePosition", this.lanePosition);
+            info.AddValue("stopped", this.stopped);
+            info.AddValue("lightStopped", this.lightStopped);
+            info.AddValue("brokenDown", this.brokenDown);
+            info.AddValue("turningLeft", this.turningLeft);
+            info.AddValue("turningRight", this.turningRight);
+            info.AddValue("breakdownTimer", this.breakdownTimer);
         }
 
         public bool intersects(Car car)

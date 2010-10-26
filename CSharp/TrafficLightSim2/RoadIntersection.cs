@@ -31,13 +31,31 @@ namespace TrafficLightSim2
         }
 
         public RoadIntersection(SerializationInfo info, StreamingContext ctxt)
-       {
-          this.road = (Road)info.GetValue("road", typeof(Road));
-       }
+        {
+            RoadIntersection.RED_LIGHT = (short)info.GetValue("RED_LIGHT", typeof(short));
+            RoadIntersection.YELLOW_LIGHT = (short)info.GetValue("YELLOW_LIGHT", typeof(short));
+            RoadIntersection.GREEN_LIGHT = (short)info.GetValue("GREEN_LIGHT", typeof(short));
+            RoadIntersection.TURNING_YELLOW_LIGHT = (short)info.GetValue("TURNING_YELLOW_LIGHT", typeof(short));
+            RoadIntersection.TURNING_GREEN_LIGHT = (short)info.GetValue("TURNING_GREEN_LIGHT", typeof(short));
+            RoadIntersection.TURNING_RED_LIGHT = (short)info.GetValue("TURNING_RED_LIGHT", typeof(short));
+            this.road = (Road)info.GetValue("road", typeof(Road));
+            this.lightState = (short)info.GetValue("lightState", typeof(short));
+            this.roadOrientation = (bool)info.GetValue("roadOrientation", typeof(bool));
+            this.intersectionCenter = (int)info.GetValue("intersectionCenter", typeof(int));
+        }
 
        public void GetObjectData(SerializationInfo info, StreamingContext ctxt)
        {
+           info.AddValue("RED_LIGHT", RoadIntersection.RED_LIGHT);
+           info.AddValue("YELLOW_LIGHT", RoadIntersection.YELLOW_LIGHT);
+           info.AddValue("GREEN_LIGHT", RoadIntersection.GREEN_LIGHT);
+           info.AddValue("TURNING_YELLOW_LIGHT", RoadIntersection.TURNING_YELLOW_LIGHT);
+           info.AddValue("TURNING_GREEN_LIGHT", RoadIntersection.TURNING_GREEN_LIGHT);
+           info.AddValue("TURNING_RED_LIGHT", RoadIntersection.TURNING_RED_LIGHT);
           info.AddValue("road", this.road);
+          info.AddValue("lightState", this.lightState);
+          info.AddValue("roadOrientation", this.roadOrientation);
+          info.AddValue("intersectionCenter", this.intersectionCenter);
        }
 	
 	     //Returns the road element which this section of the intersection belongs to
