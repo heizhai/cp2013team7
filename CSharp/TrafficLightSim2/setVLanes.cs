@@ -12,10 +12,12 @@ namespace TrafficLightSim2
     public partial class setVLanes : Form
     {
         mainWindow mainForm;
+       // SimulationEnvironment simulation;
 
-        public setVLanes(mainWindow mainForm)
+        public setVLanes(mainWindow mainForm/*, SimulationEnvironment simulation*/)
         {
             this.mainForm = mainForm;
+          //  this.simulation = simulation;
             InitializeComponent();
         }
 
@@ -40,6 +42,7 @@ namespace TrafficLightSim2
                     Settings.getSimSettings().setVNorthLanes(num1);
                     Settings.getSimSettings().setVSouthLanes(num2);
 
+                    mainForm.getSim().reset();
                     mainForm.Refresh();
                     this.Close();
                 }

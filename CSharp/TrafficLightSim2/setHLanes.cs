@@ -40,6 +40,7 @@ namespace TrafficLightSim2
                     Settings.getSimSettings().setHEastLanes(num1);
                     Settings.getSimSettings().setHWestLanes(num2);
 
+                    mainForm.getSim().reset();
                     mainForm.Refresh();
                     this.Close();
                 }

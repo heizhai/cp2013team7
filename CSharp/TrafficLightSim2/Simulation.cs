@@ -126,6 +126,7 @@ namespace TrafficLightSim2
                 lightMultiCyclesTimer.Stop();
             }
             modelIntersection.reset();
+            window.Refresh();
         }
 
         public void frameTimer_Tick(object sender, EventArgs eArgs)

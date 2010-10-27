@@ -23,6 +23,8 @@ namespace TrafficLightSim2
         private MenuItem simRunMenuItem;
         private MenuItem saveFileMenuItem;
         private MenuItem openFileMenuItem;
+        private MenuItem openMySQLMenuItem;
+        private MenuItem saveMySQLMenuItem;
         private MenuItem exitMenuItem;
 
         //Settings Menu
@@ -30,6 +32,8 @@ namespace TrafficLightSim2
         private MenuItem setVLanesMenuItem;
         private MenuItem setHProbMenuItem;
         private MenuItem setVProbMenuItem;
+        private MenuItem setLHD;
+        private MenuItem setRHD;
 
         //Lower Control Panel
         private Button runSimulationButton;
@@ -51,11 +55,15 @@ namespace TrafficLightSim2
             simRunMenuItem = new MenuItem("&Run/Stop Simulation");
             saveFileMenuItem = new MenuItem("&Save File");
             openFileMenuItem = new MenuItem("&Open File");
+            saveMySQLMenuItem = new MenuItem("&Save MySQL");
+            openMySQLMenuItem = new MenuItem("&Open MySQL");
             exitMenuItem = new MenuItem("&Exit");
             mainMenu.MenuItems.Add(myMenuItemFile);
             myMenuItemFile.MenuItems.Add(simRunMenuItem);
             myMenuItemFile.MenuItems.Add(saveFileMenuItem);
             myMenuItemFile.MenuItems.Add(openFileMenuItem);
+            myMenuItemFile.MenuItems.Add(saveMySQLMenuItem);
+            myMenuItemFile.MenuItems.Add(openMySQLMenuItem);
             myMenuItemFile.MenuItems.Add(exitMenuItem);
 
             //Settings Menu
@@ -64,7 +72,11 @@ namespace TrafficLightSim2
             setVLanesMenuItem = new MenuItem("&Set No. Vertical Lanes");
             setHProbMenuItem = new MenuItem("&Set Horizontal Lane Car Regularity");
             setVProbMenuItem = new MenuItem("&Set Vertical Lane Car Regularity");
+            setRHD = new MenuItem("&Set RHD");
+            setLHD = new MenuItem("&Set LHD");
             mainMenu.MenuItems.Add(myMenuItemSettings);
+            myMenuItemSettings.MenuItems.Add(setRHD);
+            myMenuItemSettings.MenuItems.Add(setLHD);
             myMenuItemSettings.MenuItems.Add(setHLanesMenuItem);
             myMenuItemSettings.MenuItems.Add(setVLanesMenuItem);
             myMenuItemSettings.MenuItems.Add(setHProbMenuItem);
@@ -94,6 +106,10 @@ namespace TrafficLightSim2
             //Event Handlers
             saveFileMenuItem.Click += new System.EventHandler(OnClickSave);
             openFileMenuItem.Click += new System.EventHandler(OnClickOpen);
+            saveMySQLMenuItem.Click += new System.EventHandler(OnClickSaveDB);
+            openMySQLMenuItem.Click += new System.EventHandler(OnClickOpenDB);
+            setRHD.Click +=new EventHandler(OnClickSetRHD);
+            setLHD.Click +=new EventHandler(OnClickSetLHD);
             exitMenuItem.Click += new System.EventHandler(OnClickExit);
             setHLanesMenuItem.Click += new System.EventHandler(OnClickHLanes);
             setVLanesMenuItem.Click += new System.EventHandler(OnClickVLanes);
@@ -103,6 +119,28 @@ namespace TrafficLightSim2
             resetSimulationButton.Click += new EventHandler(resetSimulation);
             setHProbMenuItem.Click += new EventHandler(settingsHProbListener);
             setVProbMenuItem.Click += new EventHandler(settingsVProbListener);
+        }
+
+        private void OnClickSetRHD(object sender, System.EventArgs e)
+        {
+            Settings.getSimSettings().setTrafficFlow(true);
+            simulation.reset();
+            this.Refresh();
+        }
+
+        private void OnClickSetLHD(object sender, System.EventArgs e)
+        {
+            Settings.getSimSettings().setTrafficFlow(false);
+            simulation.reset();
+            this.Refresh();
+        }
+
+        private void OnClickSaveDB(object sender, System.EventArgs e)
+        {
+        }
+
+        private void OnClickOpenDB(object sender, System.EventArgs e)
+        {
         }
 
         private void OnClickSave(object sender, System.EventArgs e)
@@ -171,14 +209,20 @@ namespace TrafficLightSim2
         {
             setHLanes subForm = new setHLanes(this);
             subForm.Show();
+            simulation.reset();
             this.Refresh();
         }
 
         private void OnClickVLanes(object sender, System.EventArgs e)
         {
-            setVLanes subForm = new setVLanes(this);
+            setVLanes subForm = new setVLanes(this/*, this.simulation*/);
             subForm.Show();
+            simulation.reset();
             this.Refresh();
+        }
+        public SimulationEnvironment getSim()
+        {
+            return simulation;
         }
 
         private void resetSimulation(object sender, System.EventArgs e)
@@ -209,13 +253,7 @@ namespace TrafficLightSim2
         }
 
         public void refreshSimulationReference(Intersection modelIntersection, SimulationEnvironment sim)
-        {/*
-            //There seems to be a bug or issue where simGUI uses the old modelIntersection object reference unless we remove it from the window, recreate and readd.
-            getContentPane().remove(this.simGUI);
-            this.simGUI = new SimulationGUI(modelIntersection);
-            getContentPane().add(BorderLayout.CENTER, simGUI);
-            this.simGUI.repaint();
-          */
+        {
             this.simulation = sim;
             this.model = modelIntersection;
         }
@@ -307,7 +345,7 @@ namespace TrafficLightSim2
                 }
                 else
                 {
-                    graphicsObj.FillEllipse(myBrush, (int)(hLightXEast + (hLightOrderEast[0] * lightHeight - .5 * lightDiameter)), (int)(hLightYEast + (.7 * lightWidth - .5 * lightDiameter) - lightPadding), lightDiameter, lightDiameter);
+                    graphicsObj.FillEllipse(myBrush, (int)(hLightXEast + (hLightOrderEast[0] * lightHeight - .5 * lightDiameter)), (int)(hLightYEast + (.7 * lightWidth - .5 * lightDiameter)), lightDiameter, lightDiameter);
                 }
 
                 //Green Horizontal Turning Light
@@ -326,7 +364,7 @@ namespace TrafficLightSim2
                 }
                 else
                 {
-                    graphicsObj.DrawString("↑", f, myBrush, (int) (hLightXEast+(hLightOrderEast[0]*lightHeight-.5*lightDiameter)), (int) (hLightYEast+(.25*lightWidth-.5*lightDiameter)));
+                    graphicsObj.DrawString("↑", f, myBrush, (int) (hLightXEast+(hLightOrderEast[0]*lightHeight-.5*lightDiameter)), (int) (hLightYEast+(.25*lightWidth-.5*lightDiameter) - 2));
                 }
 
                 // Yellow Horizontal Light
@@ -364,7 +402,7 @@ namespace TrafficLightSim2
                 }
                 else
                 {
-                    graphicsObj.DrawString("↑", f, myBrush, (int)(hLightXEast + (hLightOrderEast[1] * lightHeight - .5 * lightDiameter)), (int)(hLightYEast + (.25 * lightWidth - .5 * lightDiameter)));
+                    graphicsObj.DrawString("↑", f, myBrush, (int)(hLightXEast + (hLightOrderEast[1] * lightHeight - .5 * lightDiameter)), (int)(hLightYEast + (.25 * lightWidth - .5 * lightDiameter) - 2));
                 }
 
                 // Red Horizontal Light
@@ -405,7 +443,7 @@ namespace TrafficLightSim2
                 }
                 else
                 {
-                    graphicsObj.DrawString("↑", f, myBrush, (int)(hLightXEast + (hLightOrderEast[2] * lightHeight - .5 * lightDiameter)), (int)(hLightYEast + (.25 * lightWidth - .5 * lightDiameter)));
+                    graphicsObj.DrawString("↑", f, myBrush, (int)(hLightXEast + (hLightOrderEast[2] * lightHeight - .5 * lightDiameter)), (int)(hLightYEast + (.25 * lightWidth - .5 * lightDiameter) - 2));
                 }
             }
 
@@ -451,7 +489,7 @@ namespace TrafficLightSim2
                 }
                 else
                 {
-                    graphicsObj.DrawString("↓", f, myBrush, (int)(hLightXWest + (hLightOrderWest[0] * lightHeight - .5 * lightDiameter)), (int)(hLightYWest + (.5 * lightWidth - .5 * lightDiameter)));
+                    graphicsObj.DrawString("↓", f, myBrush, (int)(hLightXWest + (hLightOrderWest[0] * lightHeight - .5 * lightDiameter)), (int)(hLightYWest + (.5 * lightWidth - .5 * lightDiameter) + 5));
                 }
 
                 // Yellow Horizontal Light
@@ -488,7 +526,7 @@ namespace TrafficLightSim2
                 }
                 else
                 {
-                    graphicsObj.DrawString("↓", f, myBrush, (int)(hLightXWest + (hLightOrderWest[1] * lightHeight - .5 * lightDiameter)), (int)(hLightYWest + (.5 * lightWidth - .5 * lightDiameter)));
+                    graphicsObj.DrawString("↓", f, myBrush, (int)(hLightXWest + (hLightOrderWest[1] * lightHeight - .5 * lightDiameter)), (int)(hLightYWest + (.5 * lightWidth - .5 * lightDiameter) + 5));
                 }
 
                 // Red Horizontal Light
@@ -528,7 +566,7 @@ namespace TrafficLightSim2
                 }
                 else
                 {
-                    graphicsObj.DrawString("↓", f, myBrush, (int)(hLightXWest + (hLightOrderWest[2] * lightHeight - .5 * lightDiameter)), (int)(hLightYWest + (.5 * lightWidth - .5 * lightDiameter)));
+                    graphicsObj.DrawString("↓", f, myBrush, (int)(hLightXWest + (hLightOrderWest[2] * lightHeight - .5 * lightDiameter)), (int)(hLightYWest + (.5 * lightWidth - .5 * lightDiameter) + 5));
                 }
             }
 
@@ -573,7 +611,7 @@ namespace TrafficLightSim2
                 }
                 else
                 {
-                    graphicsObj.DrawString("→", f, myBrush, (int)(vLightXSouth + (.7 * lightWidth - .5 * lightDiameter)), (int)(vLightYSouth + (vLightOrderSouth[0] * lightHeight + .4 * lightDiameter)));
+                    graphicsObj.DrawString("→", f, myBrush, (int)(vLightXSouth + (.7 * lightWidth - .5 * lightDiameter)), (int)(vLightYSouth + (vLightOrderSouth[0] * lightHeight + .4 * lightDiameter) - 13));
                 }
 
                 // Yellow Vertical Light
@@ -610,7 +648,7 @@ namespace TrafficLightSim2
                 }
                 else
                 {
-                    graphicsObj.DrawString("→", f, myBrush, (int)(vLightXSouth + (.7 * lightWidth - .5 * lightDiameter)), (int)(vLightYSouth + (vLightOrderSouth[1] * lightHeight + .4 * lightDiameter)));
+                    graphicsObj.DrawString("→", f, myBrush, (int)(vLightXSouth + (.7 * lightWidth - .5 * lightDiameter)), (int)(vLightYSouth + (vLightOrderSouth[1] * lightHeight + .4 * lightDiameter) - 13));
                 }
 
                 // Red Vertical Light
@@ -650,7 +688,7 @@ namespace TrafficLightSim2
                 }
                 else
                 {
-                    graphicsObj.DrawString("→", f, myBrush, (int)(vLightXSouth + (.7 * lightWidth - .5 * lightDiameter)), (int)(vLightYSouth + (vLightOrderSouth[2] * lightHeight + .4 * lightDiameter)));
+                    graphicsObj.DrawString("→", f, myBrush, (int)(vLightXSouth + (.7 * lightWidth - .5 * lightDiameter)), (int)(vLightYSouth + (vLightOrderSouth[2] * lightHeight + .4 * lightDiameter) - 13));
                 }
             }
 
@@ -696,7 +734,7 @@ namespace TrafficLightSim2
                 }
                 else
                 {
-                    graphicsObj.DrawString("←", f, myBrush, (int)(vLightXNorth + (.3 * lightWidth - .5 * lightDiameter)), (int)(vLightYNorth + (vLightOrderNorth[0] * lightHeight + .5 * lightDiameter)));
+                    graphicsObj.DrawString("←", f, myBrush, (int)(vLightXNorth + (.3 * lightWidth - .5 * lightDiameter)), (int)(vLightYNorth + (vLightOrderNorth[0] * lightHeight + .5 * lightDiameter) - 14));
                 }
 
                 // Yellow Vertical Light
@@ -733,7 +771,7 @@ namespace TrafficLightSim2
                 }
                 else
                 {
-                    graphicsObj.DrawString("←", f, myBrush, (int)(vLightXNorth + (.3 * lightWidth - .5 * lightDiameter)), (int)(vLightYNorth + (vLightOrderNorth[1] * lightHeight + .5 * lightDiameter)));
+                    graphicsObj.DrawString("←", f, myBrush, (int)(vLightXNorth + (.3 * lightWidth - .5 * lightDiameter)), (int)(vLightYNorth + (vLightOrderNorth[1] * lightHeight + .5 * lightDiameter) - 14));
                 }
 
                 // Red Vertical Light
@@ -773,7 +811,7 @@ namespace TrafficLightSim2
                 }
                 else
                 {
-                    graphicsObj.DrawString("←",f , myBrush, (int)(vLightXNorth + (.3 * lightWidth - .5 * lightDiameter)), (int)(vLightYNorth + (vLightOrderNorth[2] * lightHeight + .5 * lightDiameter)));
+                    graphicsObj.DrawString("←",f , myBrush, (int)(vLightXNorth + (.3 * lightWidth - .5 * lightDiameter)), (int)(vLightYNorth + (vLightOrderNorth[2] * lightHeight + .5 * lightDiameter) - 14));
                 }
             }
         }
