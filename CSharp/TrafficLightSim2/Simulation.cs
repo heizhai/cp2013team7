@@ -199,8 +199,30 @@ namespace TrafficLightSim2
                 {
                     Car workingCar = null;
                     Road roadH = modelIntersection.gethRoadIntersection().getRoad();
-                    int randHWest = randGen.Next(roadH.getNoLanes(Settings.TRAFFIC_WEST_NORTH));
-                    int randHEast = randGen.Next(roadH.getNoLanes(Settings.TRAFFIC_EAST_SOUTH));
+                    int randHEast = 0, randHWest = 0;
+                    Console.WriteLine(roadH.getNoLanes(Settings.TRAFFIC_WEST_NORTH));
+                    Console.WriteLine(roadH.getRoadLength());
+                    if (randGen.Next(roadH.getNoLanes(Settings.TRAFFIC_WEST_NORTH)) > 1)
+                    {
+                        randHWest = randGen.Next(roadH.getNoLanes(Settings.TRAFFIC_WEST_NORTH));
+                    }
+                    else
+                    {
+                        randHWest = 0;
+                    }
+
+                    if (randGen.Next(roadH.getNoLanes(Settings.TRAFFIC_EAST_SOUTH)) > 1)
+                    {
+                        randHEast = randGen.Next(roadH.getNoLanes(Settings.TRAFFIC_EAST_SOUTH));
+                    }
+                    else
+                    {
+                        randHEast = 0;
+                    }
+
+                    Console.WriteLine(randHWest);
+                    Console.WriteLine(randHEast);
+                    
                     int lanePositionHWest = roadH.getRoadLength();
                     int lanePositionHEast = 0;
 
@@ -208,12 +230,12 @@ namespace TrafficLightSim2
                     {
                         modelIntersection.gethRoadIntersection().getRoad().getLane(Settings.TRAFFIC_WEST_NORTH, randHWest).addCar(workingCar = new Car(lanePositionHWest));
 
-                        if (randGen.Next() < (Settings.getSimSettings().getTurnLeftProbability() * 100))
+                        if (randGen.Next(100) < (Settings.getSimSettings().getTurnLeftProbability() * 100))
                         {
                             workingCar.setTurningLeft(true);
                         }
 
-                        if (randGen.Next() < (Settings.getSimSettings().getTurnRightProbability() * 100))
+                        if (randGen.Next(100) < (Settings.getSimSettings().getTurnRightProbability() * 100))
                         {
                             workingCar.setTurningRight(true);
                         }

@@ -464,5 +464,10 @@ namespace TrafficLightSim2
                 this.turnRightProbability = turnRightProbability;
             }
         }
+
+        public void setLightCycleTime(int time)
+        {
+            LIGHT_CYCLE_TIME = time;
+        }
     }
 }

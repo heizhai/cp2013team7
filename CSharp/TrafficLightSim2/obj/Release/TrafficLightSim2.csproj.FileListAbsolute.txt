@@ -74,3 +74,9 @@ C:\Users\Aiden\Desktop\Fairly Working\TrafficLightSim2\obj\Release\TrafficLightS
 C:\Users\Aiden\Desktop\Fairly Working\TrafficLightSim2\obj\Release\TrafficLightSim2.setVLanes.resources
 C:\Users\Aiden\Desktop\Fairly Working\TrafficLightSim2\obj\Release\TrafficLightSim2.setVReg.resources
 C:\Users\Aiden\Desktop\Fairly Working\TrafficLightSim2\obj\Release\TrafficLightSim2.csproj.GenerateResource.Cache
+C:\Users\Aiden\Desktop\CSharp\TrafficLightSim2\obj\Release\TrafficLightSim2.setHSpeed.resources
+C:\Users\Aiden\Desktop\CSharp\TrafficLightSim2\obj\Release\TrafficLightSim2.setVSpeed.resources
+C:\Users\Aiden\Desktop\CSharp\TrafficLightSim2\obj\Release\TrafficLightSim2.setTurnLeft.resources
+C:\Users\Aiden\Desktop\CSharp\TrafficLightSim2\obj\Release\TrafficLightSim2.setTurnRight.resources
+C:\Users\Aiden\Desktop\CSharp\TrafficLightSim2\obj\Release\TrafficLightSim2.setBreakdown.resources
+C:\Users\Aiden\Desktop\CSharp\TrafficLightSim2\obj\Release\TrafficLightSim2.setLightTime.resources

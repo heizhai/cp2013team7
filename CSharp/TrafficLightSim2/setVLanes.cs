@@ -37,7 +37,7 @@ namespace TrafficLightSim2
                 short num1 = Convert.ToInt16(textBox1.Text);
                 short num2 = Convert.ToInt16(textBox2.Text);
 
-                if (num1 < 4 && num1 > 0 && num2 < 4 && num2 > 0)
+                if (num1 < 4 && num1 >= 0 && num2 < 4 && num2 >= 0)
                 {
                     Settings.getSimSettings().setVNorthLanes(num1);
                     Settings.getSimSettings().setVSouthLanes(num2);

@@ -32,6 +32,12 @@ namespace TrafficLightSim2
         private MenuItem setVLanesMenuItem;
         private MenuItem setHProbMenuItem;
         private MenuItem setVProbMenuItem;
+        private MenuItem setVSpeedMenuItem;
+        private MenuItem setHSpeedMenuItem;
+        private MenuItem setTurnRightMenuItem;
+        private MenuItem setTurnLeftMenuItem;
+        private MenuItem setBreakdownMenuItem;
+        private MenuItem setLightCycleMenuItem;
         private MenuItem setLHD;
         private MenuItem setRHD;
 
@@ -72,6 +78,12 @@ namespace TrafficLightSim2
             setVLanesMenuItem = new MenuItem("&Set No. Vertical Lanes");
             setHProbMenuItem = new MenuItem("&Set Horizontal Lane Car Regularity");
             setVProbMenuItem = new MenuItem("&Set Vertical Lane Car Regularity");
+            setHSpeedMenuItem = new MenuItem("&Set Road Speed Horizontal");
+            setVSpeedMenuItem = new MenuItem("&Set Road Speed Vertical");
+            setTurnRightMenuItem = new MenuItem("&Set Turning Probability Right");
+            setTurnLeftMenuItem = new MenuItem("&Set Turning Probability Left");
+            setBreakdownMenuItem = new MenuItem("&Set Breakdown Probability");
+            setLightCycleMenuItem = new MenuItem("&Set Light Cycle Times");
             setRHD = new MenuItem("&Set RHD");
             setLHD = new MenuItem("&Set LHD");
             mainMenu.MenuItems.Add(myMenuItemSettings);
@@ -81,7 +93,13 @@ namespace TrafficLightSim2
             myMenuItemSettings.MenuItems.Add(setVLanesMenuItem);
             myMenuItemSettings.MenuItems.Add(setHProbMenuItem);
             myMenuItemSettings.MenuItems.Add(setVProbMenuItem);
-
+            myMenuItemSettings.MenuItems.Add(setVSpeedMenuItem);
+            myMenuItemSettings.MenuItems.Add(setHSpeedMenuItem);
+            myMenuItemSettings.MenuItems.Add(setTurnRightMenuItem);
+            myMenuItemSettings.MenuItems.Add(setTurnLeftMenuItem);
+            myMenuItemSettings.MenuItems.Add(setBreakdownMenuItem);
+            myMenuItemSettings.MenuItems.Add(setLightCycleMenuItem);
+            setLHD.Visible = false;
             //Control Buttons
             runSimulationButton = new Button();
             runSimulationButton.Text = "Run";
@@ -119,10 +137,56 @@ namespace TrafficLightSim2
             resetSimulationButton.Click += new EventHandler(resetSimulation);
             setHProbMenuItem.Click += new EventHandler(settingsHProbListener);
             setVProbMenuItem.Click += new EventHandler(settingsVProbListener);
+            setHSpeedMenuItem.Click += new EventHandler(setHSpeedMenuItem_Click);
+            setVSpeedMenuItem.Click += new EventHandler(setVSpeedMenuItem_Click);
+            setTurnRightMenuItem.Click += new EventHandler(setTurnRightMenuItem_Click);
+            setTurnLeftMenuItem.Click += new EventHandler(setTurnLeftMenuItem_Click);
+            setBreakdownMenuItem.Click += new EventHandler(setBreakdownMenuItem_Click);
+            setLightCycleMenuItem.Click += new EventHandler(setLightCycleMenuItem_Click);
+        }
+
+        private void setHSpeedMenuItem_Click(object sender, System.EventArgs e)
+        {
+            setHSpeed subForm = new setHSpeed(this);
+            subForm.Show();
+        }
+
+        private void setVSpeedMenuItem_Click(object sender, System.EventArgs e)
+        {
+            setVSpeed subForm = new setVSpeed(this);
+            subForm.Show();
+        }
+
+        private void setTurnLeftMenuItem_Click(object sender, System.EventArgs e)
+        {
+            setTurnLeft subForm = new setTurnLeft(this);
+            subForm.Show();
+        }
+
+        private void setTurnRightMenuItem_Click(object sender, System.EventArgs e)
+        {
+            setTurnRight subForm = new setTurnRight(this);
+            subForm.Show();
+        }
+
+        private void setBreakdownMenuItem_Click(object sender, System.EventArgs e)
+        {
+            setBreakdown subForm = new setBreakdown(this);
+            subForm.Show();
+            //Settings.getSimSettings().setBreakdownProbability(num);
+        }
+
+        private void setLightCycleMenuItem_Click(object sender, System.EventArgs e)
+        {
+            setLightTime subForm = new setLightTime(this);
+            subForm.Show();
+            //Settings.getSimSettings().setLightCycleTime(num);
         }
 
         private void OnClickSetRHD(object sender, System.EventArgs e)
         {
+            setLHD.Visible = true;
+            setRHD.Visible = false;
             Settings.getSimSettings().setTrafficFlow(true);
             simulation.reset();
             this.Refresh();
@@ -130,6 +194,8 @@ namespace TrafficLightSim2
 
         private void OnClickSetLHD(object sender, System.EventArgs e)
         {
+            setLHD.Visible = false;
+            setRHD.Visible = true;
             Settings.getSimSettings().setTrafficFlow(false);
             simulation.reset();
             this.Refresh();

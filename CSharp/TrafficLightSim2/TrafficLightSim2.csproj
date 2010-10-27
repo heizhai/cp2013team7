@@ -49,6 +49,19 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Car.cs" />
+    <Compile Include="setBreakdown.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="setBreakdown.Designer.cs">
+      <DependentUpon>setBreakdown.cs</DependentUpon>
+    </Compile>
+    <Compile Include="setHSpeed.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="setHSpeed.Designer.cs">
+      <DependentUpon>setHSpeed.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MySQLConnection.cs" />
     <Compile Include="Road.cs" />
     <Compile Include="Lane.cs" />
     <Compile Include="Intersection.cs" />
@@ -70,6 +83,24 @@
     <Compile Include="setHReg.Designer.cs">
       <DependentUpon>setHReg.cs</DependentUpon>
     </Compile>
+    <Compile Include="setLightTime.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="setLightTime.Designer.cs">
+      <DependentUpon>setLightTime.cs</DependentUpon>
+    </Compile>
+    <Compile Include="setTurnLeft.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="setTurnLeft.Designer.cs">
+      <DependentUpon>setTurnLeft.cs</DependentUpon>
+    </Compile>
+    <Compile Include="setTurnRight.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="setTurnRight.Designer.cs">
+      <DependentUpon>setTurnRight.cs</DependentUpon>
+    </Compile>
     <Compile Include="setVLanes.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -82,6 +113,12 @@
     <Compile Include="setVReg.Designer.cs">
       <DependentUpon>setVReg.cs</DependentUpon>
     </Compile>
+    <Compile Include="setVSpeed.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="setVSpeed.Designer.cs">
+      <DependentUpon>setVSpeed.cs</DependentUpon>
+    </Compile>
     <Compile Include="Simulation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="mainWindow.resx">
@@ -93,6 +130,10 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="setBreakdown.resx">
+      <DependentUpon>setBreakdown.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="setHLanes.resx">
       <DependentUpon>setHLanes.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -101,12 +142,32 @@
       <DependentUpon>setHReg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="setHSpeed.resx">
+      <DependentUpon>setHSpeed.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="setLightTime.resx">
+      <DependentUpon>setLightTime.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="setTurnLeft.resx">
+      <DependentUpon>setTurnLeft.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="setTurnRight.resx">
+      <DependentUpon>setTurnRight.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="setVLanes.resx">
       <DependentUpon>setVLanes.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="setVReg.resx">
       <DependentUpon>setVReg.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="setVSpeed.resx">
+      <DependentUpon>setVSpeed.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <Compile Include="Properties\Resources.Designer.cs">
