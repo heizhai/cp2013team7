@@ -24,24 +24,17 @@ class MySQLConnection implements Serializable {
     private String database;
     private Connection conn;
 
-    void MySQLConnection(String hostname, String username, String password, String database) {
+    MySQLConnection(String hostname, String username, String password, String database) throws InstantiationException, IllegalAccessException, SQLException, ClassNotFoundException {
         this.hostname = hostname;
         this.username = username;
         this.password = password;
         this.database = database;
+        this.openConnection();
     }
 
-    public void openConnection() throws InstantiationException, IllegalAccessException {
-        try {
+    public void openConnection() throws InstantiationException, IllegalAccessException, SQLException, ClassNotFoundException {
             Class.forName("com.mysql.jdbc.Driver").newInstance();
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(MySQLConnection.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        try {
             this.conn = DriverManager.getConnection("jdbc:mysql://" + this.hostname + "/" + this.database + "?" + "user=" + this.username + "&password=" + this.password);
-        } catch (SQLException ex) {
-            Logger.getLogger(MySQLConnection.class.getName()).log(Level.SEVERE, null, ex);
-        }
     }
 
     public ResultSet selectQuery(String queryString) {
@@ -56,7 +49,7 @@ class MySQLConnection implements Serializable {
       }
     }
 
-    public void insertQuery(String queryString) {
+    public void insertUpdateQuery(String queryString) {
         try{
             Statement st = conn.createStatement();
             int val = st.executeUpdate(queryString);

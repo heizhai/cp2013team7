@@ -18,7 +18,7 @@ public class Simulation {Intersection modelIntersection = new Intersection();
      *
      * @param args the command line arguments
      */
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws InterruptedException, InstantiationException, IllegalAccessException {
 
         SimulationEnvironment simulation = new SimulationEnvironment();
 
@@ -38,14 +38,20 @@ class SimulationEnvironment {
     private Timer frameTimer;
     private Timer lightTimer;
     private Timer lightMultiCyclesTimer;
-    private MySQLConnection mysql;
+    //private MySQLConnection mysql;
 
 
-    SimulationEnvironment() {
+    SimulationEnvironment(){
         this.modelIntersection = new Intersection();
         this.window = new mainWindow(modelIntersection, this, "Traffic Intersection Simulation");
         this.window.setSize(700, 700);
         this.window.setVisible(true);
+        /*try {
+            this.mysql = new MySQLConnection("dunk2.jcu.edu.au", "cp2013group07", "1d95dd", "datastore");
+        } catch(Exception ex) {
+            window.exceptionWindow("MySQL Server Connection Failure \n Error Message: \n"+ex.getMessage());
+            window.disableMySQL();
+        }*/
     }
 
     /**
@@ -92,11 +98,31 @@ class SimulationEnvironment {
             lightMultiCyclesTimer.cancel();
         }
         modelIntersection.reset();
+        window.repaint();
     }
 
     void setWindow(mainWindow window) {
         this.window = window;
     }
+
+    //MySQL Functionality was removed due to bugginess and time restraints
+    /*void mySQLoutput(String saveName) throws IOException {
+        if(mysql != null) {
+            ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+            ObjectOutputStream outStream = new ObjectOutputStream(byteStream);
+
+            outStream.writeObject(Settings.getSimSettings().outputSettings());
+            outStream.writeObject(modelIntersection);
+
+            outStream.close();
+
+            mysql.insertUpdateQuery("INSERT INTO datastore (datastore_savename, datastore_java, datastore_csharp, datastore_data) VALUES ('"+saveName+"', true, false, '"+byteStream.toByteArray()+"') ON DUPLICATE KEY UPDATE datastore_data = '"+byteStream.toByteArray()+"';");
+        }
+    }
+
+    void mySQLinput(String saveName) {
+
+    }*/
 
     void fileOutput(File file) {
         try {
@@ -273,7 +299,7 @@ class simulationFrame extends TimerTask {
 
         //Move The Car Forward
         if(car.getStopped() == false) {
-            if(randGen.nextDouble()*Settings.BREAKDOWN_PROBABILITY_LIMIT < Settings.getSimSettings().getBreakdownProbability()) {
+            if(randGen.nextDouble()*Settings.BREAKDOWN_PROBABILITY_BOUNDS[1] < Settings.getSimSettings().getBreakdownProbability()) {
                 car.breakdown();
             } else {
                 car.moveCar(trafficCycleDistance);
@@ -467,10 +493,43 @@ class simulationFrame extends TimerTask {
                     car.intersects((middleLine+(Settings.CAR_LENGTH/2)), roadIntersection.getRoad().getRoadSpeed(), trafficDirection)
                     && (Settings.getSimSettings().getTrafficFlow() == Settings.TRAFFIC_FLOW_RIGHT_HAND_TRAFFIC)
                     && (car.getTurningLeft() == true)
-                    //&& (roadIntersection.getRoad().getLane(trafficDirection, (roadIntersection.getRoad().getNoLanes(trafficDirection)-1)) == lane)
                     && (roadIntersection.getLightState() == RoadIntersection.TURNING_GREEN_LIGHT)
             ) {
-                //TO BE IMPLEMENTED
+                //Car Turning Left into Second Lane
+
+                Lane turningLane = null;
+                int laneLocation = 0;
+
+                if((trafficDirection == Settings.TRAFFIC_EAST_SOUTH && roadIntersection.getRoadOrientation() == Settings.ROAD_SOUTH_NORTH) || (trafficDirection == Settings.TRAFFIC_WEST_NORTH && roadIntersection.getRoadOrientation() == Settings.ROAD_EAST_WEST)) {
+                    // Traffic heading South or West
+                    if(lane == roadIntersection.getRoad().getLane(trafficDirection, (roadIntersection.getRoad().getNoLanes(trafficDirection)-1))) {
+                        // Traffic in the Left/Top Lane
+                        if(roadIntersection.getRoadOrientation() == Settings.ROAD_SOUTH_NORTH) {
+                            // Traffic Heading South turning East
+                            turningLane = intersectingRoadIntersection.getRoad().getLane(Settings.TRAFFIC_EAST_SOUTH, 0);
+                        } else {
+                            // Traffic Heading West turning South
+                            turningLane = intersectingRoadIntersection.getRoad().getLane(Settings.TRAFFIC_EAST_SOUTH, (intersectingRoadIntersection.getRoad().getNoLanes(trafficDirection)-1));
+                        }
+                        laneLocation = intersectingRoadIntersection.getIntersectionCenter()-(Settings.CAR_LENGTH/2);
+                        car.turn(turningLane, lane, laneLocation);
+                    }
+                } else {
+                    // Traffic heading North or East
+                    if(lane == roadIntersection.getRoad().getLane(trafficDirection, 0)) {
+                        // Traffic in the Bottom/Right Lane
+                        if(roadIntersection.getRoadOrientation() == Settings.ROAD_SOUTH_NORTH) {
+                            // Traffic heading North turning West
+                            turningLane = intersectingRoadIntersection.getRoad().getLane(Settings.TRAFFIC_WEST_NORTH, (intersectingRoadIntersection.getRoad().getNoLanes(trafficDirection)-1));
+                        } else {
+                            // Traffic heading East turning North
+                            turningLane = intersectingRoadIntersection.getRoad().getLane(Settings.TRAFFIC_WEST_NORTH, 0);
+                        }
+                        laneLocation = intersectingRoadIntersection.getIntersectionCenter()+(Settings.CAR_LENGTH/2);
+                        car.turn(turningLane, lane, laneLocation);
+                    }
+                }
+
             }
 
             if(car.intersects(lane.getCarInfront(car, trafficDirection))) {

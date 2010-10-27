@@ -93,7 +93,7 @@ public class SimulationGUI extends JPanel {
             if(Settings.getSimSettings().getTrafficFlow() == Settings.TRAFFIC_FLOW_LEFT_HAND_TRAFFIC) {
                 g.fillOval((int) (hLightXEast+(hLightOrderEast[0]*lightHeight-.5*lightDiameter)), (int) (hLightYEast+(.3*lightWidth-.5*lightDiameter)) , lightDiameter, lightDiameter);
             } else {
-                g.fillOval((int) (hLightXEast+(hLightOrderEast[0]*lightHeight-.5*lightDiameter)), (int) (hLightYEast+(.7*lightWidth-.5*lightDiameter)-lightPadding) , lightDiameter, lightDiameter);
+                g.fillOval((int) (hLightXEast+(hLightOrderEast[0]*lightHeight-.5*lightDiameter)), (int) (hLightYEast+(.7*lightWidth-.5*lightDiameter)) , lightDiameter, lightDiameter);
             }
 
             //Green Horizontal Turning Light
@@ -105,7 +105,7 @@ public class SimulationGUI extends JPanel {
             if(Settings.getSimSettings().getTrafficFlow() == Settings.TRAFFIC_FLOW_LEFT_HAND_TRAFFIC) {
                 g.drawString("↓", (int) (hLightXEast+(hLightOrderEast[0]*lightHeight-.5*lightDiameter)), (int) (hLightYEast+(.8*lightWidth)));
             } else {
-                g.drawString("↑", (int) (hLightXEast+(hLightOrderEast[0]*lightHeight-.5*lightDiameter)), (int) (hLightYEast+(.25*lightWidth-.5*lightDiameter)));
+                g.drawString("↑", (int) (hLightXEast+(hLightOrderEast[0]*lightHeight-.5*lightDiameter)), (int) (hLightYEast+(.3*lightWidth+.5*lightDiameter)));
             }
             
             // Yellow Horizontal Light
@@ -129,7 +129,7 @@ public class SimulationGUI extends JPanel {
             if(Settings.getSimSettings().getTrafficFlow() == Settings.TRAFFIC_FLOW_LEFT_HAND_TRAFFIC) {
                 g.drawString("↓", (int) (hLightXEast+(hLightOrderEast[1]*lightHeight-.5*lightDiameter)), (int) (hLightYEast+(.8*lightWidth)));
             } else {
-                g.drawString("↑", (int) (hLightXEast+(hLightOrderEast[1]*lightHeight-.5*lightDiameter)), (int) (hLightYEast+(.25*lightWidth-.5*lightDiameter)));
+                g.drawString("↑", (int) (hLightXEast+(hLightOrderEast[1]*lightHeight-.5*lightDiameter)), (int) (hLightYEast+(.3*lightWidth+.5*lightDiameter)));
             }
 
 
@@ -154,7 +154,7 @@ public class SimulationGUI extends JPanel {
             if(Settings.getSimSettings().getTrafficFlow() == Settings.TRAFFIC_FLOW_LEFT_HAND_TRAFFIC) {
                 g.drawString("↓", (int) (hLightXEast+(hLightOrderEast[2]*lightHeight-.5*lightDiameter)), (int) (hLightYEast+(.8*lightWidth)));
             } else {
-                g.drawString("↑", (int) (hLightXEast+(hLightOrderEast[2]*lightHeight-.5*lightDiameter)), (int) (hLightYEast+(.25*lightWidth-.5*lightDiameter)));
+                g.drawString("↑", (int) (hLightXEast+(hLightOrderEast[2]*lightHeight-.5*lightDiameter)), (int) (hLightYEast+(.3*lightWidth+.5*lightDiameter)));
             }
 
         }
@@ -187,7 +187,7 @@ public class SimulationGUI extends JPanel {
             if(Settings.getSimSettings().getTrafficFlow() == Settings.TRAFFIC_FLOW_LEFT_HAND_TRAFFIC) {
                 g.drawString("↑", (int) (hLightXWest+(hLightOrderWest[0]*lightHeight-.5*lightDiameter)), (int) (hLightYWest+(.5*lightWidth-.5*lightDiameter)));
             } else {
-                g.drawString("↓", (int) (hLightXWest+(hLightOrderWest[0]*lightHeight-.5*lightDiameter)), (int) (hLightYWest+(.5*lightWidth-.5*lightDiameter)));
+                g.drawString("↓", (int) (hLightXWest+(hLightOrderWest[0]*lightHeight-.5*lightDiameter)), (int) (hLightYWest+(.7*lightWidth+.5*lightDiameter)));
             }
 
             // Yellow Horizontal Light
@@ -210,7 +210,7 @@ public class SimulationGUI extends JPanel {
             if(Settings.getSimSettings().getTrafficFlow() == Settings.TRAFFIC_FLOW_LEFT_HAND_TRAFFIC) {
                 g.drawString("↑", (int) (hLightXWest+(hLightOrderWest[1]*lightHeight-.5*lightDiameter)), (int) (hLightYWest+(.5*lightWidth-.5*lightDiameter)));
             } else {
-                g.drawString("↓", (int) (hLightXWest+(hLightOrderWest[1]*lightHeight-.5*lightDiameter)), (int) (hLightYWest+(.5*lightWidth-.5*lightDiameter)));
+                g.drawString("↓", (int) (hLightXWest+(hLightOrderWest[1]*lightHeight-.5*lightDiameter)), (int) (hLightYWest+(.7*lightWidth+.5*lightDiameter)));
             }
 
             // Red Horizontal Light
@@ -234,7 +234,7 @@ public class SimulationGUI extends JPanel {
             if(Settings.getSimSettings().getTrafficFlow() == Settings.TRAFFIC_FLOW_LEFT_HAND_TRAFFIC) {
                 g.drawString("↑", (int) (hLightXWest+(hLightOrderWest[2]*lightHeight-.5*lightDiameter)), (int) (hLightYWest+(.5*lightWidth-.5*lightDiameter)));
             } else {
-                g.drawString("↓", (int) (hLightXWest+(hLightOrderWest[2]*lightHeight-.5*lightDiameter)), (int) (hLightYWest+(.5*lightWidth-.5*lightDiameter)));
+                g.drawString("↓", (int) (hLightXWest+(hLightOrderWest[2]*lightHeight-.5*lightDiameter)), (int) (hLightYWest+(.7*lightWidth+.5*lightDiameter)));
             }
 
         }

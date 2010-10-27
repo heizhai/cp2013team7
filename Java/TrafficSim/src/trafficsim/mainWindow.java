@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JCheckBoxMenuItem;
@@ -47,6 +48,9 @@ public class mainWindow extends javax.swing.JFrame {
     private JMenuItem setWestLanesMenuItem;
     private JMenuItem setHProbMenuItem;
     private JMenuItem setVProbMenuItem;
+    private JMenuItem setHSpeed;
+    private JMenuItem setVSpeed;
+    private JMenuItem setBreakdownProbability;
 
     private JCheckBoxMenuItem setLHD;
     private JCheckBoxMenuItem setRHD;
@@ -71,11 +75,11 @@ public class mainWindow extends javax.swing.JFrame {
 
         //File Menu Initialisation
         simRunMenuItem = new JCheckBoxMenuItem();
-        mySQLConfMenuItem = new JMenuItem();
+        //mySQLConfMenuItem = new JMenuItem();
         openFileMenuItem = new JMenuItem();
         saveFileMenuItem = new JMenuItem();
-        openMySQLMenuItem = new JMenuItem();
-        saveMySQLMenuItem = new JMenuItem();
+        //openMySQLMenuItem = new JMenuItem();
+        //saveMySQLMenuItem = new JMenuItem();
         exitMenuItem = new JMenuItem();
        
         //Settings Menu Initialisation
@@ -87,6 +91,9 @@ public class mainWindow extends javax.swing.JFrame {
         setVProbMenuItem = new JMenuItem();
         setLHD = new JCheckBoxMenuItem();
         setRHD = new JCheckBoxMenuItem();
+        setHSpeed = new JMenuItem();
+        setVSpeed = new JMenuItem();
+        setBreakdownProbability = new JMenuItem();
 
         //Set Window Settings
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -97,11 +104,11 @@ public class mainWindow extends javax.swing.JFrame {
 
         //Set File Menu Text
         simRunMenuItem.setText("Run Simulation");
-        mySQLConfMenuItem.setText("Configure Database Connection");
+        //mySQLConfMenuItem.setText("Configure Database Connection");
         openFileMenuItem.setText("Open File");
         saveFileMenuItem.setText("Save File");
-        openMySQLMenuItem.setText("Open from Database");
-        saveMySQLMenuItem.setText("Save to Database");
+        //openMySQLMenuItem.setText("Open from Database");
+        //saveMySQLMenuItem.setText("Save to Database");
         exitMenuItem.setText("Exit");
 
         //Set Settings Menu Text
@@ -114,19 +121,22 @@ public class mainWindow extends javax.swing.JFrame {
         setLHD.setText("Left Hand Drive");
         setLHD.setSelected(true);
         setRHD.setText("Right Hand Drive");
+        setHSpeed.setText("Horizontal Road Speed");
+        setVSpeed.setText("Vertical Road Speed");
+        setBreakdownProbability.setText("Breakdown Probability");
 
 
         //Construct File Menu
         fileMenu.add(new JSeparator());
         fileMenu.add(simRunMenuItem);
         fileMenu.add(new JSeparator());
-        fileMenu.add(mySQLConfMenuItem);
-        fileMenu.add(new JSeparator());
+        //fileMenu.add(mySQLConfMenuItem);
+        //fileMenu.add(new JSeparator());
         fileMenu.add(openFileMenuItem);
-        fileMenu.add(openMySQLMenuItem);
+        //fileMenu.add(openMySQLMenuItem);
         fileMenu.add(new JSeparator());
         fileMenu.add(saveFileMenuItem);
-        fileMenu.add(saveMySQLMenuItem);
+        //fileMenu.add(saveMySQLMenuItem);
         fileMenu.add(new JSeparator());
         fileMenu.add(exitMenuItem);
 
@@ -141,6 +151,10 @@ public class mainWindow extends javax.swing.JFrame {
         settingsMenu.add(new JSeparator());
         settingsMenu.add(setHProbMenuItem);
         settingsMenu.add(setVProbMenuItem);
+        settingsMenu.add(setBreakdownProbability);
+        settingsMenu.add(new JSeparator());
+        settingsMenu.add(setHSpeed);
+        settingsMenu.add(setVSpeed);
 
         //Construct Menubar
         mainMenuBar.add(fileMenu);
@@ -165,6 +179,8 @@ public class mainWindow extends javax.swing.JFrame {
         //Add Event Handlers
         openFileMenuItem.addActionListener(new fileOpenListener(simulation, this));
         saveFileMenuItem.addActionListener(new fileSaveListener(simulation, this));
+        //openMySQLMenuItem.addActionListener(new mysqlOpenListener(simulation));
+        //saveMySQLMenuItem.addActionListener(new mysqlSaveListener(simulation));
         stopSimulationButton.addActionListener(new simulationToggle(this, simulation));
         runSimulationButton.addActionListener(new simulationToggle(this, simulation));
         resetSimulationButton.addActionListener(new simulationReset(this, simulation));
@@ -175,8 +191,11 @@ public class mainWindow extends javax.swing.JFrame {
         setSouthLanesMenuItem.addActionListener(new settingsLanesListener(this, simulation, Settings.TRAFFIC_EAST_SOUTH, Settings.ROAD_SOUTH_NORTH));
         setEastLanesMenuItem.addActionListener(new settingsLanesListener(this, simulation, Settings.TRAFFIC_EAST_SOUTH, Settings.ROAD_EAST_WEST));
         setWestLanesMenuItem.addActionListener(new settingsLanesListener(this, simulation, Settings.TRAFFIC_WEST_NORTH, Settings.ROAD_EAST_WEST));
-        setHProbMenuItem.addActionListener(new settingsHProbListener());
-        setVProbMenuItem.addActionListener(new settingsVProbListener());
+        setHProbMenuItem.addActionListener(new settingsHProbListener(simulation));
+        setVProbMenuItem.addActionListener(new settingsVProbListener(simulation));
+        setBreakdownProbability.addActionListener(new settingsBreakdownProbListener(simulation));
+        setHSpeed.addActionListener(new settingsHSpeedListener(simulation));
+        setVSpeed.addActionListener(new settingsVSpeedListener(simulation));
 
         //Pack the window
         pack();
@@ -187,11 +206,10 @@ public class mainWindow extends javax.swing.JFrame {
         runSimulationButton.setVisible(!condition);
         stopSimulationButton.setVisible(condition);
         settingsMenu.setEnabled(!condition);
-        mySQLConfMenuItem.setEnabled(!condition);
         openFileMenuItem.setEnabled(!condition);
-        openMySQLMenuItem.setEnabled(!condition);
+        //openMySQLMenuItem.setEnabled(!condition);
         saveFileMenuItem.setEnabled(!condition);
-        saveMySQLMenuItem.setEnabled(!condition);
+        //saveMySQLMenuItem.setEnabled(!condition);
     }
 
     public void redrawSimulation() {
@@ -204,6 +222,15 @@ public class mainWindow extends javax.swing.JFrame {
         this.simGUI = new SimulationGUI(modelIntersection);
         getContentPane().add(BorderLayout.CENTER, simGUI);
         this.simGUI.repaint();
+    }
+
+    void exceptionWindow(String exceptionString) {
+        JOptionPane.showMessageDialog(this, exceptionString);
+    }
+
+    void disableMySQL() {
+        openMySQLMenuItem.setEnabled(false);
+        saveMySQLMenuItem.setEnabled(false);
     }
 
 }
@@ -342,8 +369,11 @@ public class mainWindow extends javax.swing.JFrame {
                 }  
             }
         }
-
-        window.redrawSimulation();
+        try {
+            this.simulation.reset();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(settingsLanesListener.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
     }
 
@@ -357,13 +387,37 @@ public class mainWindow extends javax.swing.JFrame {
  */
  class settingsHProbListener implements ActionListener {
 
+     SimulationEnvironment sim = null;
+
+     settingsHProbListener(SimulationEnvironment sim) {
+         this.sim = sim;
+     }
+
     public void actionPerformed(ActionEvent e) {
         String label = "Horizontal Car Probability ("+Settings.H_CAR_PROBABILITY_BOUNDS[0]+"-"+Settings.H_CAR_PROBABILITY_BOUNDS[1]+"):";
-        Double value = Double.parseDouble(JOptionPane.showInputDialog(null, label));
-        if((value < Settings.H_CAR_PROBABILITY_BOUNDS[0]) || (value > Settings.H_CAR_PROBABILITY_BOUNDS[1])) {
-            JOptionPane.showMessageDialog(null, "Enter a value between "+Settings.H_CAR_PROBABILITY_BOUNDS[0]+" and "+Settings.H_CAR_PROBABILITY_BOUNDS[1]);
-        } else {
-            Settings.getSimSettings().setHCarProbability(value);
+        boolean fieldComplete = false;
+
+        while(fieldComplete != true) {
+            try {
+                Double value = Double.parseDouble(JOptionPane.showInputDialog(null, label));
+                if((value < Settings.H_CAR_PROBABILITY_BOUNDS[0]) || (value > Settings.H_CAR_PROBABILITY_BOUNDS[1])) {
+                    JOptionPane.showMessageDialog(null, "Enter a value between "+Settings.H_CAR_PROBABILITY_BOUNDS[0]+" and "+Settings.H_CAR_PROBABILITY_BOUNDS[1]);
+                } else {
+                    Settings.getSimSettings().setHCarProbability(value);
+                    fieldComplete = true;
+                }
+            } catch (NumberFormatException ex) {
+                //Nothing was entered or cancel was hit
+                fieldComplete = true;
+            } catch (NullPointerException ex) {
+                //Nothing was entered or cancel was hit
+                fieldComplete = true;
+            }
+        }
+        try {
+            this.sim.reset();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(settingsHProbListener.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -376,29 +430,166 @@ public class mainWindow extends javax.swing.JFrame {
  */
  class settingsVProbListener implements ActionListener {
 
+     SimulationEnvironment sim = null;
+
+     settingsVProbListener(SimulationEnvironment sim) {
+         this.sim = sim;
+     }
+
     public void actionPerformed(ActionEvent e) {
         String label = "Vertical Car Probability ("+Settings.V_CAR_PROBABILITY_BOUNDS[0]+"-"+Settings.V_CAR_PROBABILITY_BOUNDS[1]+"):";
-        Double value = Double.parseDouble(JOptionPane.showInputDialog(null, label));
-        if((value < Settings.V_CAR_PROBABILITY_BOUNDS[0]) || (value > Settings.V_CAR_PROBABILITY_BOUNDS[1])) {
-            JOptionPane.showMessageDialog(null, "Enter a value between "+Settings.V_CAR_PROBABILITY_BOUNDS[0]+" and "+Settings.V_CAR_PROBABILITY_BOUNDS[1]);
-        } else {
-            Settings.getSimSettings().setVCarProbability(value);
+        boolean fieldComplete = false;
+
+        while(fieldComplete != true) {
+            try {
+                Double value = Double.parseDouble(JOptionPane.showInputDialog(null, label));
+                if((value < Settings.V_CAR_PROBABILITY_BOUNDS[0]) || (value > Settings.V_CAR_PROBABILITY_BOUNDS[1])) {
+                    JOptionPane.showMessageDialog(null, "Enter a value between "+Settings.V_CAR_PROBABILITY_BOUNDS[0]+" and "+Settings.V_CAR_PROBABILITY_BOUNDS[1]);
+                } else {
+                    Settings.getSimSettings().setVCarProbability(value);
+                    fieldComplete = true;
+                }
+            } catch (NumberFormatException ex) {
+                //Nothing was entered or cancel was hit
+                fieldComplete = true;
+            } catch (NullPointerException ex) {
+                //Nothing was entered or cancel was hit
+                fieldComplete = true;
+            }
+        }
+        try {
+            this.sim.reset();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(settingsVProbListener.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
 }
 
-  /**
- * ActionListener implementing class which handles the pressing of the "Configure Database Connection" button.
+ /**
+ * ActionListener implementing class which handles the pressing of the "Breakdown Probability" button.
  *
  * @author Tristan Davey
  */
- class mysqlConSettingsListener implements ActionListener {
+ class settingsBreakdownProbListener implements ActionListener {
 
-    public void actionPerformed(ActionEvent e) {
+     SimulationEnvironment sim = null;
 
+    settingsBreakdownProbListener(SimulationEnvironment sim) {
+        this.sim = sim;;
     }
 
+    public void actionPerformed(ActionEvent e) {
+        String label = "Car Breakdown Probability ("+Settings.BREAKDOWN_PROBABILITY_BOUNDS[0]+"-"+Settings.BREAKDOWN_PROBABILITY_BOUNDS[1]+"):";
+        boolean fieldComplete = false;
+
+        while(fieldComplete != true) {
+            try {
+                Double value = Double.parseDouble(JOptionPane.showInputDialog(null, label));
+                if((value < Settings.BREAKDOWN_PROBABILITY_BOUNDS[0]) || (value > Settings.BREAKDOWN_PROBABILITY_BOUNDS[1])) {
+                    JOptionPane.showMessageDialog(null, "Enter a value between "+Settings.BREAKDOWN_PROBABILITY_BOUNDS[0]+" and "+Settings.BREAKDOWN_PROBABILITY_BOUNDS[1]);
+                } else {
+                    Settings.getSimSettings().setBreakdownProbability(value);
+                    fieldComplete = true;
+                }
+            } catch (NumberFormatException ex) {
+                //Nothing was entered or cancel was hit
+                fieldComplete = true;
+            } catch (NullPointerException ex) {
+                //Nothing was entered or cancel was hit
+                fieldComplete = true;
+            }
+        }
+        try {
+            this.sim.reset();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(settingsBreakdownProbListener.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+}
+
+
+ /**
+ * ActionListener implementing class which handles the pressing of the "Breakdown Probability" button.
+ *
+ * @author Tristan Davey
+ */
+ class settingsHSpeedListener implements ActionListener {
+     
+     SimulationEnvironment sim = null;
+
+     settingsHSpeedListener (SimulationEnvironment sim) {
+         this.sim = sim;;
+     }
+
+    public void actionPerformed(ActionEvent e) {
+        String label = "Horizontal Lane Speed ("+Settings.ROAD_SPEED_BOUNDS[0]+"-"+Settings.ROAD_SPEED_BOUNDS[1]+"):";
+        boolean fieldComplete = false;
+
+        while(fieldComplete != true) {
+            try {
+                int value = Integer.parseInt(JOptionPane.showInputDialog(null, label));
+                if((value < Settings.ROAD_SPEED_BOUNDS[0]) || (value > Settings.ROAD_SPEED_BOUNDS[1])) {
+                    JOptionPane.showMessageDialog(null, "Enter a value between "+Settings.ROAD_SPEED_BOUNDS[0]+" and "+Settings.ROAD_SPEED_BOUNDS[1]);
+                } else {
+                    Settings.getSimSettings().sethRoadSpeed(value);
+                    fieldComplete = true;
+                }
+            } catch (NumberFormatException ex) {
+                //Nothing was entered or cancel was hit
+                fieldComplete = true;
+            } catch (NullPointerException ex) {
+                //Nothing was entered or cancel was hit
+                fieldComplete = true;
+            }
+        }
+        try {
+            this.sim.reset();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(settingsHSpeedListener.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+}
+
+ /**
+ * ActionListener implementing class which handles the pressing of the "Breakdown Probability" button.
+ *
+ * @author Tristan Davey
+ */
+ class settingsVSpeedListener implements ActionListener {
+
+     SimulationEnvironment sim = null;
+
+     settingsVSpeedListener (SimulationEnvironment sim) {
+         this.sim = sim;
+     }
+
+    public void actionPerformed(ActionEvent e) {
+        String label = "Vertical Lane Speed ("+Settings.ROAD_SPEED_BOUNDS[0]+"-"+Settings.ROAD_SPEED_BOUNDS[1]+"):";
+        boolean fieldComplete = false;
+
+        while(fieldComplete != true) {
+            try {
+                int value = Integer.parseInt(JOptionPane.showInputDialog(null, label));
+                if((value < Settings.ROAD_SPEED_BOUNDS[0]) || (value > Settings.ROAD_SPEED_BOUNDS[1])) {
+                    JOptionPane.showMessageDialog(null, "Enter a value between "+Settings.ROAD_SPEED_BOUNDS[0]+" and "+Settings.ROAD_SPEED_BOUNDS[1]);
+                } else {
+                    Settings.getSimSettings().setvRoadSpeed(value);
+                    fieldComplete = true;
+                }
+            } catch (NumberFormatException ex) {
+                //Nothing was entered or cancel was hit
+                fieldComplete = true;
+            } catch (NullPointerException ex) {
+                //Nothing was entered or cancel was hit
+                fieldComplete = true;
+            }
+        }
+        try {
+            this.sim.reset();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(settingsVSpeedListener.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 }
 
   /**
@@ -406,26 +597,53 @@ public class mainWindow extends javax.swing.JFrame {
  *
  * @author Tristan Davey
  */
- class mysqlSaveListener implements ActionListener {
+ /*class mysqlSaveListener implements ActionListener {
 
-    public void actionPerformed(ActionEvent e) {
+    SimulationEnvironment simulation;
 
+    mysqlSaveListener(SimulationEnvironment simulation) {
+        this.simulation = simulation;
     }
 
-}
+    public void actionPerformed(ActionEvent e) {
+        boolean fieldComplete = false;
+        String saveNameValue = null;
+        
+        while(fieldComplete == false) {
+            saveNameValue = JOptionPane.showInputDialog(null, "Enter the save name: ");
+            if(saveNameValue == null) {
+                JOptionPane.showMessageDialog(null, "Enter a valid save name.");
+            } else {
+                try {
+                    this.simulation.mySQLoutput(saveNameValue);
+                } catch (IOException ex) {
+                    Logger.getLogger(mysqlSaveListener.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+        
+    }
+
+}*/
 
   /**
  * ActionListener implementing class which handles the pressing of the "Save to Database" button.
  *
  * @author Tristan Davey
  */
- class mysqlOpenListener implements ActionListener {
+ /*class mysqlOpenListener implements ActionListener {
+
+    SimulationEnvironment simulation;
+
+    mysqlOpenListener(SimulationEnvironment simulation) {
+        this.simulation = simulation;
+    }
 
     public void actionPerformed(ActionEvent e) {
 
     }
 
-}
+}*/
 
   /**
  * ActionListener implementing class which handles the pressing of the "Open from Database" button.

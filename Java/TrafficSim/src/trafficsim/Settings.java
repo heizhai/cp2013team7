@@ -39,8 +39,8 @@ public class Settings implements Serializable {
     public static final double[] V_CAR_PROBABILITY_BOUNDS = {0.0, 1.0};
     public static final double[] TURN_LEFT_PROBABILITY_BOUNDS = {0.0, 1.0};
     public static final double[] TURN_RIGHT_PROBABILITY_BOUNDS = {0.0, 1.0};
-    public static final int[] LIGHT_CYCLE_BOUNDS = {1,10};
-    public static final double BREAKDOWN_PROBABILITY_LIMIT = 100.00;
+    public static final int[] ROAD_SPEED_BOUNDS = {1, 10};
+    public static final double[] BREAKDOWN_PROBABILITY_BOUNDS = {0.0, 100.00};
     
     // Default Settings Values
     public static final int DEFAULT_ROAD_LENGTH = 500;
@@ -59,8 +59,8 @@ public class Settings implements Serializable {
     private short vSouthLanes = DEFAULT_LANE_NUMBER;
     private int vLaneLength = DEFAULT_ROAD_LENGTH;
     private int hLaneLength = DEFAULT_ROAD_LENGTH;
-    private int vRoadSpeed = 4;//this.DEFAULT_ROAD_SPEED;
-    private int hRoadSpeed = 2;//this.DEFAULT_ROAD_SPEED;
+    private int vRoadSpeed = this.DEFAULT_ROAD_SPEED;
+    private int hRoadSpeed = this.DEFAULT_ROAD_SPEED;
     private int vIntersectionCenter = DEFAULT_ROAD_CENTER;
     private int hIntersectionCenter = DEFAULT_ROAD_CENTER;
     private double hCarProbability = DEFAULT_CAR_PROBABILITY;
